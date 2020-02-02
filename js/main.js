@@ -1,6 +1,6 @@
 'use strict';
 
-var MESSAGES = [
+var PHRASES = [
   'Всё отлично!',
   'В целом всё неплохо. Но не всё.',
   'Когда вы делаете фотографию, хорошо бы убирать палец из кадра. В конце концов это просто непрофессионально.',
@@ -8,9 +8,11 @@ var MESSAGES = [
   'Я поскользнулся на банановой кожуре и уронил фотоаппарат на кота и у меня получилась фотография лучше.',
   'Лица у людей на фотке перекошены, как будто их избивают. Как можно было поймать такой неудачный момент?!'
 ];
-var NAMES = ['Кристофер Робин', 'Пятачок', 'Иа-Иа', 'Кенга', 'Крошка Ру', 'Сова', 'Кролик', 'Тигра'];
+var NAMES = ['Джон Сильвер', 'Джим Хокинс', 'Билли Бонс', 'Доктор Дэвид Ливси', 'Капитан Александр Смоллетт', 'Сквайр Джон Трелони', 'Длинноногий Бен', 'Капитан Джон Флинт', 'Слепой Пью', 'Чёрный Пёс', 'Джонни'];
+var AVATARS_NUMBER = 6;
+var MAX_COMMENTS_NUMBER = 8;
 var PHOTOS_NUMBER = 25;
-var AVATAR_NUMBER = 6;
+
 
 // функция рандомно возвращает значение 0 или 1
 var flipCoin = function () {
@@ -34,32 +36,55 @@ var getRandomElement = function (array) {
 
 // получаем адрес случайной фотографии на аватар
 var generateAvatarUrl = function () {
-  return 'img/avatar-' + getRandomNumber(1, AVATAR_NUMBER) + '.svg';
+  return 'img/avatar-' + getRandomNumber(1, AVATARS_NUMBER) + '.svg';
 };
 
-// определяем количество отображаемых сообщений: 1 или 2
-var getCommentNumber = function () {
-  return flipCoin() ? 1 : 2; // может стоит писать flipCoin() === 1
+// отпределяем рандомно количество фраз в отзыве
+var getPhrasesNumber = function () {
+  return (flipCoin() === 0) ? 1 : 2;
 };
 
-// функция возвращает массив со случайными сообщениями для комментария
-var getRandomMessages = function () {
-  var messages = [];
-  for (var i; i <= getCommentNumber(); i++) {
-    messages.push(getRandomElement(MESSAGES));
+// получаем массив со случайными фразами для отзыва
+var getRandomPhrases = function (phrases) {
+  var randomPhrases = [];
+  for (var i = 0; i < getPhrasesNumber(); i++) {
+    randomPhrases.push(getRandomElement(phrases));
   }
-  return messages;
+  return randomPhrases;
+};
+
+// склеиваем фразы из массива в один отзыв
+var createMessageOfPhrases = function (phrases) {
+  var comment = '';
+  for (var i = 0; i < phrases.length; i++) {
+    comment += (i === 0) ? phrases[i] : ' ' + phrases[i];
+  }
+  return comment;
 };
 
 // создаем один комментарий
-var createCommentItem = function () {
+var createCommentsItem = function () {
   var comment =
   {
     avatar: generateAvatarUrl(),
-    message: getRandomMessages(),
+    message: createMessageOfPhrases(getRandomPhrases(PHRASES)),
     name: getRandomElement(NAMES)
   };
   return comment;
+};
+
+// создаем рандомное количество комментариев
+var createCommentsList = function () {
+  var comments = [];
+  for (var i = 1; i < getRandomNumber(1, MAX_COMMENTS_NUMBER); i++) {
+    comments.push(createCommentsItem());
+  }
+  return comments;
+};
+
+// считаем количество комментариев
+var countCommentsNumber = function (comments) {
+  return comments.length;
 };
 
 // получаем адрес случайной фотографии для ленты
@@ -68,7 +93,7 @@ var generatePhotoUrl = function (index) {
 };
 
 // Создаем массив с фотографиями
-var createPhotoArray = function () {
+var createPhotosArray = function () {
   var photos = [];
   for (var i = 0; i < PHOTOS_NUMBER; i++) {
     photos.push(
@@ -76,11 +101,40 @@ var createPhotoArray = function () {
           url: generatePhotoUrl(i + 1),
           description: '',
           likes: getRandomNumber(15, 200),
-          comments: createCommentItem()
+          comments: countCommentsNumber(createCommentsList())
         }
     );
   }
   return photos;
 };
 
-createPhotoArray();
+// находим шаблон и его содержимое в документе
+var templatePicture = document.querySelector('#picture')
+  .content
+  .querySelector('.picture');
+
+var picturesGallery = document.querySelector('.pictures');
+
+// Копируем шаблон и вставляем к него данные
+var createPicturesItem = function (photo) {
+  var pictureElement = templatePicture.cloneNode(true);
+
+  pictureElement.querySelector('.picture__img').src = photo.url;
+  pictureElement.querySelector('.picture__likes').textContent = photo.likes;
+  pictureElement.querySelector('.picture__comments').textContent = photo.comments;
+
+  return pictureElement;
+};
+
+// создаем DOM-элементы и заполняем их
+var createPicturesList = function (photos) {
+  var fragment = document.createDocumentFragment();
+
+  for (var i = 0; i < photos.length; i++) {
+    fragment.appendChild(createPicturesItem(photos[i]));
+  }
+  return fragment;
+};
+
+// отображаем галлерею с фото
+picturesGallery.appendChild(createPicturesList(createPhotosArray()));
