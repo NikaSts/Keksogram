@@ -14,24 +14,14 @@ var MAX_COMMENTS_NUMBER = 8;
 var PHOTOS_NUMBER = 25;
 
 
-// функция рандомно возвращает значение 0 или 1
-var flipCoin = function () {
-  return Math.floor(Math.random() * 2);
-};
-
 // Получение случайного числа в интервале от min до max включительно
 var getRandomNumber = function (min, max) {
-  return Math.floor(Math.random() * (max - min)) + min;
-};
-
-// Получение рандомного индекса у массива
-var getRandomIndex = function (array) {
-  return Math.floor(Math.random() * array.length);
+  return Math.floor(Math.random() * (max - min + 1)) + min; // ты говорил лучше без +1, но тогда функция не выдает никогда верхнее значение
 };
 
 // функция возвращает случайный элемент из массива
 var getRandomElement = function (array) {
-  return array[getRandomIndex(array)];
+  return array[getRandomNumber(0, array.length)];
 };
 
 // получаем адрес случайной фотографии на аватар
@@ -41,7 +31,7 @@ var generateAvatarUrl = function () {
 
 // отпределяем рандомно количество фраз в отзыве
 var getPhrasesNumber = function () {
-  return (flipCoin() === 0) ? 1 : 2;
+  return (getRandomNumber(0, 1) === 0) ? 1 : 2;
 };
 
 // получаем массив со случайными фразами для отзыва
@@ -82,18 +72,13 @@ var createCommentsList = function () {
   return comments;
 };
 
-// считаем количество комментариев
-var countCommentsNumber = function (comments) {
-  return comments.length;
-};
-
 // получаем адрес случайной фотографии для ленты
 var generatePhotoUrl = function (index) {
   return 'photos/' + index + '.jpg';
 };
 
 // Создаем массив с фотографиями
-var createPhotosArray = function () {
+var createPhotos = function () {
   var photos = [];
   for (var i = 0; i < PHOTOS_NUMBER; i++) {
     photos.push(
@@ -101,7 +86,7 @@ var createPhotosArray = function () {
           url: generatePhotoUrl(i + 1),
           description: '',
           likes: getRandomNumber(15, 200),
-          comments: countCommentsNumber(createCommentsList())
+          comments: createCommentsList().length
         }
     );
   }
@@ -137,4 +122,4 @@ var createPicturesList = function (photos) {
 };
 
 // отображаем галлерею с фото
-picturesGallery.appendChild(createPicturesList(createPhotosArray()));
+picturesGallery.appendChild(createPicturesList(createPhotos()));
