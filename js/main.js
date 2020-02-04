@@ -21,7 +21,7 @@ var getRandomNumber = function (min, max) {
 
 // функция возвращает случайный элемент из массива
 var getRandomElement = function (array) {
-  return array[getRandomNumber(0, array.length)];
+  return array[getRandomNumber(0, array.length - 1)];
 };
 
 // получаем адрес случайной фотографии на аватар
@@ -66,11 +66,12 @@ var createCommentsItem = function () {
 // создаем рандомное количество комментариев
 var createCommentsList = function () {
   var comments = [];
-  for (var i = 1; i < getRandomNumber(1, MAX_COMMENTS_NUMBER); i++) {
+  for (var i = 0; i < getRandomNumber(1, MAX_COMMENTS_NUMBER); i++) {
     comments.push(createCommentsItem());
   }
   return comments;
 };
+
 
 // получаем адрес случайной фотографии для ленты
 var generatePhotoUrl = function (index) {
@@ -123,3 +124,48 @@ var createPicturesList = function (photos) {
 
 // отображаем галлерею с фото
 picturesGallery.appendChild(createPicturesList(createPhotos()));
+
+// находим и показываем элемент .big-picture
+var bigPicture = document.querySelector('.big-picture');
+bigPicture.classList.remove('hidden');
+
+bigPicture.querySelector('.big-picture__img').querySelector('img').src = createPhotos()[0].url;
+bigPicture.querySelector('.likes-count').textContent = createPhotos()[0].likes;
+bigPicture.querySelector('.comments-count').textContent = createPhotos()[0].comments;
+
+var makeElement = function (tagName, className, text) {
+  var element = document.createElement(tagName);
+  element.classList.add(className);
+  if (text) {
+    element.textContent = text;
+  }
+  return element;
+};
+
+var createCommemtsElement = function (index) {
+  var commentsItem = makeElement('li', 'social__comment');
+
+  var image = makeElement('img', 'social__picture');
+  image.src = createCommentsList()[index].avatar;
+  image.alt = createCommentsList()[index].name;
+  commentsItem.appendChild(image);
+
+  var text = makeElement('p', 'social__text', createCommentsList()[index].message);
+  commentsItem.appendChild(text);
+
+  return commentsItem;
+};
+
+var commentsList = bigPicture.querySelector('.social__comments');
+commentsList.innerHTML = '';
+for (var i = 0; i < createCommentsList().length; i++) {
+  commentsList.appendChild(createCommemtsElement(i));
+}
+
+bigPicture.querySelector('.social__caption').textContent = createPhotos()[0].description;
+
+bigPicture.querySelector('.social__comment-count').classList.add('hidden');
+bigPicture.querySelector('.comments-loader').classList.add('hidden');
+
+var body = document.querySelector('body');
+body.classList.add('.modal-open');
