@@ -53,7 +53,7 @@ var createMessageOfPhrases = function (phrases) {
 };
 
 // создаем один комментарий
-var createCommentsItem = function () {
+var createCommemtsElement = function () {
   var comment =
   {
     avatar: generateAvatarUrl(),
@@ -64,14 +64,13 @@ var createCommentsItem = function () {
 };
 
 // создаем рандомное количество комментариев
-var createCommentsList = function () {
+var createComments = function () {
   var comments = [];
   for (var i = 0; i < getRandomNumber(1, MAX_COMMENTS_NUMBER); i++) {
-    comments.push(createCommentsItem());
+    comments.push(createCommemtsElement());
   }
   return comments;
 };
-
 
 // получаем адрес случайной фотографии для ленты
 var generatePhotoUrl = function (index) {
@@ -87,7 +86,7 @@ var createPhotos = function () {
           url: generatePhotoUrl(i + 1),
           description: '',
           likes: getRandomNumber(15, 200),
-          comments: createCommentsList().length
+          comments: createComments()
         }
     );
   }
@@ -107,7 +106,7 @@ var createPicturesItem = function (photo) {
 
   pictureElement.querySelector('.picture__img').src = photo.url;
   pictureElement.querySelector('.picture__likes').textContent = photo.likes;
-  pictureElement.querySelector('.picture__comments').textContent = photo.comments;
+  pictureElement.querySelector('.picture__comments').textContent = photo.comments.length;
 
   return pictureElement;
 };
@@ -125,15 +124,22 @@ var createPicturesList = function (photos) {
 // отображаем галлерею с фото
 picturesGallery.appendChild(createPicturesList(createPhotos()));
 
+
+// сохраняю результат работы функции в переменную (временное решение)
+var PHOTOS = createPhotos();
+
 // находим и показываем элемент .big-picture
 var bigPicture = document.querySelector('.big-picture');
 bigPicture.classList.remove('hidden');
 
-bigPicture.querySelector('.big-picture__img').querySelector('img').src = createPhotos()[0].url;
-bigPicture.querySelector('.likes-count').textContent = createPhotos()[0].likes;
-bigPicture.querySelector('.comments-count').textContent = createPhotos()[0].comments;
+// заполняем его информацией
+bigPicture.querySelector('.big-picture__img').querySelector('img').src = PHOTOS[0].url;
+bigPicture.querySelector('.likes-count').textContent = PHOTOS[0].likes;
+bigPicture.querySelector('.comments-count').textContent = PHOTOS[0].comments.length;
+bigPicture.querySelector('.social__caption').textContent = PHOTOS[0].description;
 
-var makeElement = function (tagName, className, text) {
+// функция создания одного элемента разметки
+var createItem = function (tagName, className, text) {
   var element = document.createElement(tagName);
   element.classList.add(className);
   if (text) {
@@ -142,27 +148,28 @@ var makeElement = function (tagName, className, text) {
   return element;
 };
 
-var createCommemtsElement = function (index) {
-  var commentsItem = makeElement('li', 'social__comment');
+// создаем один комментарий
+var createCommentsItem = function (index) {
+  var commentsItem = createItem('li', 'social__comment');
 
-  var image = makeElement('img', 'social__picture');
-  image.src = createCommentsList()[index].avatar;
-  image.alt = createCommentsList()[index].name;
+  var image = createItem('img', 'social__picture');
+  image.src = PHOTOS[0].comments[index].avatar;
+  image.alt = PHOTOS[0].comments[index].name;
   commentsItem.appendChild(image);
 
-  var text = makeElement('p', 'social__text', createCommentsList()[index].message);
+  var text = createItem('p', 'social__text', PHOTOS[0].comments[index].message);
   commentsItem.appendChild(text);
 
   return commentsItem;
 };
 
+// убираем шаблонные комментарии и вставляем свои
 var commentsList = bigPicture.querySelector('.social__comments');
 commentsList.innerHTML = '';
-for (var i = 0; i < createCommentsList().length; i++) {
-  commentsList.appendChild(createCommemtsElement(i));
+for (var i = 0; i < PHOTOS[0].comments.length; i++) {
+  commentsList.appendChild(createCommentsItem(i));
 }
 
-bigPicture.querySelector('.social__caption').textContent = createPhotos()[0].description;
 
 bigPicture.querySelector('.social__comment-count').classList.add('hidden');
 bigPicture.querySelector('.comments-loader').classList.add('hidden');
