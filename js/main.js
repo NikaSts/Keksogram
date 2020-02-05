@@ -126,17 +126,17 @@ picturesGallery.appendChild(createPicturesList(createPhotos()));
 
 
 // сохраняю результат работы функции в переменную (временное решение)
-var PHOTOS = createPhotos();
+var photos = createPhotos();
 
 // находим и показываем элемент .big-picture
 var bigPicture = document.querySelector('.big-picture');
 bigPicture.classList.remove('hidden');
 
 // заполняем его информацией
-bigPicture.querySelector('.big-picture__img').querySelector('img').src = PHOTOS[0].url;
-bigPicture.querySelector('.likes-count').textContent = PHOTOS[0].likes;
-bigPicture.querySelector('.comments-count').textContent = PHOTOS[0].comments.length;
-bigPicture.querySelector('.social__caption').textContent = PHOTOS[0].description;
+bigPicture.querySelector('.big-picture__img').querySelector('img').src = photos[0].url;
+bigPicture.querySelector('.likes-count').textContent = photos[0].likes;
+bigPicture.querySelector('.comments-count').textContent = photos[0].comments.length;
+bigPicture.querySelector('.social__caption').textContent = photos[0].description;
 
 // функция создания одного элемента разметки
 var createItem = function (tagName, className, text) {
@@ -153,11 +153,11 @@ var createCommentsItem = function (index) {
   var commentsItem = createItem('li', 'social__comment');
 
   var image = createItem('img', 'social__picture');
-  image.src = PHOTOS[0].comments[index].avatar;
-  image.alt = PHOTOS[0].comments[index].name;
+  image.src = photos[0].comments[index].avatar;
+  image.alt = photos[0].comments[index].name;
   commentsItem.appendChild(image);
 
-  var text = createItem('p', 'social__text', PHOTOS[0].comments[index].message);
+  var text = createItem('p', 'social__text', photos[0].comments[index].message);
   commentsItem.appendChild(text);
 
   return commentsItem;
@@ -166,7 +166,7 @@ var createCommentsItem = function (index) {
 // убираем шаблонные комментарии и вставляем свои
 var commentsList = bigPicture.querySelector('.social__comments');
 commentsList.innerHTML = '';
-for (var i = 0; i < PHOTOS[0].comments.length; i++) {
+for (var i = 0; i < photos[0].comments.length; i++) {
   commentsList.appendChild(createCommentsItem(i));
 }
 
