@@ -14,7 +14,7 @@ var MAX_COMMENTS_NUMBER = 8;
 var PHOTOS_NUMBER = 25;
 
 
-// Получение случайного числа в интервале от min до max включительно
+// Получение случайного числа в интервале [min,  max)
 var getRandomNumber = function (min, max) {
   return Math.floor(Math.random() * (max - min)) + min;
 };
@@ -157,7 +157,7 @@ var createCommentsList = function (comments) {
 var bigPicture = document.querySelector('.big-picture');
 
 // заполняем его информацией
-var createBigPictureElement = function (photo) {
+var renderBigPictureElement = function (photo) {
   var image = bigPicture.querySelector('.big-picture__img').querySelector('img');
   image.src = photo.url;
 
@@ -179,7 +179,7 @@ var createBigPictureElement = function (photo) {
 };
 
 // отображаем большую картинку
-createBigPictureElement(photos[0]);
+renderBigPictureElement(photos[0]);
 
 document.querySelector('body').classList.add('.modal-open');
 bigPicture.classList.remove('hidden');
