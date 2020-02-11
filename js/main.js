@@ -31,25 +31,17 @@ var generateAvatarUrl = function () {
 
 // отпределяем рандомно количество фраз в отзыве
 var getPhrasesNumber = function () {
-  return (Math.floor(Math.random() * 2) === 0) ? 1 : 2; // как вариант, просто вставить формулу, не вынося ее в отдельную функцию
+  return getRandomNumber(1, 3);
 };
 
 // получаем массив со случайными фразами для отзыва
 var getRandomPhrases = function (phrases) {
+  var phraseCount = getPhrasesNumber();
   var randomPhrases = [];
-  for (var i = 0; i < getPhrasesNumber(); i++) {
+  for (var i = 0; i < phraseCount; i++) {
     randomPhrases.push(getRandomElement(phrases));
   }
   return randomPhrases;
-};
-
-// склеиваем фразы из массива в один отзыв
-var createMessageOfPhrases = function (phrases) {
-  var comment = '';
-  for (var i = 0; i < phrases.length; i++) {
-    comment += (i === 0) ? phrases[i] : ' ' + phrases[i];
-  }
-  return comment;
 };
 
 // создаем один комментарий
@@ -57,7 +49,7 @@ var createCommemtsElement = function () {
   var comment =
   {
     avatar: generateAvatarUrl(),
-    message: createMessageOfPhrases(getRandomPhrases(PHRASES)),
+    message: getRandomPhrases(PHRASES).join(' '),
     name: getRandomElement(NAMES)
   };
   return comment;
@@ -65,8 +57,9 @@ var createCommemtsElement = function () {
 
 // создаем рандомное количество комментариев
 var createComments = function () {
+  var commentCount = getRandomNumber(1, MAX_COMMENTS_NUMBER);
   var comments = [];
-  for (var i = 0; i < getRandomNumber(1, MAX_COMMENTS_NUMBER); i++) {
+  for (var i = 0; i < commentCount; i++) {
     comments.push(createCommemtsElement());
   }
   return comments;
@@ -78,7 +71,7 @@ var generatePhotoUrl = function (index) {
 };
 
 // Создаем массив с фотографиями
-var createPhotos = (function () {
+var createPhotos = function () {
   var photos = [];
   for (var i = 0; i < PHOTOS_NUMBER; i++) {
     photos.push(
@@ -90,10 +83,8 @@ var createPhotos = (function () {
         }
     );
   }
-  return function inner() {
-    return photos;
-  };
-}());
+  return photos;
+};
 
 // находим шаблон и его содержимое в документе
 var templatePicture = document.querySelector('#picture')
@@ -124,22 +115,9 @@ var createPicturesList = function (photos) {
 };
 
 // отображаем галлерею с фото
-picturesGallery.appendChild(createPicturesList(createPhotos()));
+var photos = createPhotos();
+picturesGallery.appendChild(createPicturesList(photos));
 
-
-var bigPicture = document.querySelector('.big-picture');
-
-// заполняем его информацией
-var getBigPictureElement = function () {
-  var bigPictureElement = '';
-
-  bigPicture.querySelector('.big-picture__img').querySelector('img').src = createPhotos()[0].url;
-  bigPicture.querySelector('.likes-count').textContent = createPhotos()[0].likes;
-  bigPicture.querySelector('.comments-count').textContent = createPhotos()[0].comments.length;
-  bigPicture.querySelector('.social__caption').textContent = createPhotos()[0].description;
-
-  return bigPictureElement;
-};
 
 // функция создания одного элемента разметки
 var createItem = function (tagName, className, text) {
@@ -152,40 +130,56 @@ var createItem = function (tagName, className, text) {
 };
 
 // создаем один комментарий
-var createCommentsItem = function (index) {
+var createCommentsItem = function (comment) {
   var commentsItem = createItem('li', 'social__comment');
 
   var image = createItem('img', 'social__picture');
-  image.src = createPhotos()[0].comments[index].avatar;
-  image.alt = createPhotos()[0].comments[index].name;
+  image.src = comment.avatar;
+  image.alt = comment.name;
   commentsItem.appendChild(image);
 
-  var text = createItem('p', 'social__text', createPhotos()[0].comments[index].message);
+  var text = createItem('p', 'social__text', comment.message);
   commentsItem.appendChild(text);
 
   return commentsItem;
 };
 
 // создаем DOM-элементы и заполняем их
-var createCommentsList = function () {
+var createCommentsList = function (comments) {
   var fragment = document.createDocumentFragment();
 
-  for (var i = 0; i < createPhotos()[0].comments.length; i++) {
-    fragment.appendChild((createCommentsItem(i)));
+  for (var i = 0; i < comments.length; i++) {
+    fragment.appendChild(createCommentsItem(comments[i]));
   }
   return fragment;
 };
 
-// убираем шаблонные комментарии и отображаем свои
-getBigPictureElement();
-var commentsList = bigPicture.querySelector('.social__comments');
-commentsList.innerHTML = '';
-commentsList.appendChild(createCommentsList());
+var bigPicture = document.querySelector('.big-picture');
 
-bigPicture.querySelector('.social__comment-count').classList.add('hidden');
-bigPicture.querySelector('.comments-loader').classList.add('hidden');
+// заполняем его информацией
+var createBigPictureElement = function (photo) {
+  var image = bigPicture.querySelector('.big-picture__img').querySelector('img');
+  image.src = photo.url;
 
-var body = document.querySelector('body');
-body.classList.add('.modal-open');
+  var description = bigPicture.querySelector('.social__caption');
+  description.textContent = photo.description;
 
+  var likesCount = bigPicture.querySelector('.likes-count');
+  likesCount.textContent = photo.likes;
+
+  var commentsCount = bigPicture.querySelector('.comments-count');
+  commentsCount.textContent = photo.comments.length;
+
+  var commentsList = bigPicture.querySelector('.social__comments');
+  commentsList.innerHTML = '';
+  commentsList.appendChild(createCommentsList(photo.comments));
+
+  bigPicture.querySelector('.social__comment-count').classList.add('hidden');
+  bigPicture.querySelector('.comments-loader').classList.add('hidden');
+};
+
+// отображаем большую картинку
+createBigPictureElement(photos[0]);
+
+document.querySelector('body').classList.add('.modal-open');
 bigPicture.classList.remove('hidden');
