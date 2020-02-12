@@ -12,6 +12,7 @@ var NAMES = ['Джон Сильвер', 'Джим Хокинс', 'Билли Б�
 var AVATARS_NUMBER = 6;
 var MAX_COMMENTS_NUMBER = 8;
 var PHOTOS_NUMBER = 25;
+var ESCAPE_KEY = 27;
 
 
 // Получение случайного числа в интервале [min,  max)
@@ -157,7 +158,7 @@ var createCommentsList = function (comments) {
 var bigPicture = document.querySelector('.big-picture');
 
 // заполняем его информацией
-var renderBigPictureElement = function (photo) {
+var renderBigPicture = function (photo) {
   var image = bigPicture.querySelector('.big-picture__img').querySelector('img');
   image.src = photo.url;
 
@@ -179,7 +180,30 @@ var renderBigPictureElement = function (photo) {
 };
 
 // отображаем большую картинку
-renderBigPictureElement(photos[0]);
+var body = document.querySelector('body');
+var pictureCancel = bigPicture.querySelector('#picture-cancel');
 
-document.querySelector('body').classList.add('.modal-open');
-bigPicture.classList.remove('hidden');
+var showBigPicture = function () {
+  renderBigPicture(photos[0]);
+  body.classList.add('modal-open');
+  bigPicture.classList.remove('hidden');
+
+  document.addEventListener('keydown', onDocumentEscPress);
+  pictureCancel.addEventListener('click', hideBigPicture);
+};
+
+var hideBigPicture = function () {
+  body.classList.remove('modal-open');
+  bigPicture.classList.add('hidden');
+
+  document.removeEventListener('keydown', onDocumentEscPress);
+  pictureCancel.removeEventListener('click', hideBigPicture);
+};
+
+var onDocumentEscPress = function (evt) {
+  if (evt.keyCode === ESCAPE_KEY) {
+    hideBigPicture();
+  }
+};
+
+showBigPicture();
