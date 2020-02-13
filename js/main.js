@@ -12,79 +12,58 @@ var NAMES = ['Джон Сильвер', 'Джим Хокинс', 'Билли Б�
 var AVATARS_NUMBER = 6;
 var MAX_COMMENTS_NUMBER = 8;
 var PHOTOS_NUMBER = 25;
+var ESCAPE_KEY = 27;
 
 
-// функция рандомно возвращает значение 0 или 1
-var flipCoin = function () {
-  return Math.floor(Math.random() * 2);
-};
-
-// Получение случайного числа в интервале от min до max включительно
+// Получение случайного числа в интервале [min,  max)
 var getRandomNumber = function (min, max) {
   return Math.floor(Math.random() * (max - min)) + min;
 };
 
-// Получение рандомного индекса у массива
-var getRandomIndex = function (array) {
-  return Math.floor(Math.random() * array.length);
-};
-
 // функция возвращает случайный элемент из массива
 var getRandomElement = function (array) {
-  return array[getRandomIndex(array)];
+  return array[getRandomNumber(0, array.length)];
 };
 
 // получаем адрес случайной фотографии на аватар
 var generateAvatarUrl = function () {
-  return 'img/avatar-' + getRandomNumber(1, AVATARS_NUMBER) + '.svg';
+  return 'img/avatar-' + getRandomNumber(1, AVATARS_NUMBER + 1) + '.svg';
 };
 
 // отпределяем рандомно количество фраз в отзыве
 var getPhrasesNumber = function () {
-  return (flipCoin() === 0) ? 1 : 2;
+  return getRandomNumber(1, 3);
 };
 
 // получаем массив со случайными фразами для отзыва
 var getRandomPhrases = function (phrases) {
+  var phraseCount = getPhrasesNumber();
   var randomPhrases = [];
-  for (var i = 0; i < getPhrasesNumber(); i++) {
+  for (var i = 0; i < phraseCount; i++) {
     randomPhrases.push(getRandomElement(phrases));
   }
   return randomPhrases;
 };
 
-// склеиваем фразы из массива в один отзыв
-var createMessageOfPhrases = function (phrases) {
-  var comment = '';
-  for (var i = 0; i < phrases.length; i++) {
-    comment += (i === 0) ? phrases[i] : ' ' + phrases[i];
-  }
-  return comment;
-};
-
 // создаем один комментарий
-var createCommentsItem = function () {
+var createCommemtsElement = function () {
   var comment =
   {
     avatar: generateAvatarUrl(),
-    message: createMessageOfPhrases(getRandomPhrases(PHRASES)),
+    message: getRandomPhrases(PHRASES).join(' '),
     name: getRandomElement(NAMES)
   };
   return comment;
 };
 
 // создаем рандомное количество комментариев
-var createCommentsList = function () {
+var createComments = function () {
+  var commentCount = getRandomNumber(1, MAX_COMMENTS_NUMBER);
   var comments = [];
-  for (var i = 1; i < getRandomNumber(1, MAX_COMMENTS_NUMBER); i++) {
-    comments.push(createCommentsItem());
+  for (var i = 0; i < commentCount; i++) {
+    comments.push(createCommemtsElement());
   }
   return comments;
-};
-
-// считаем количество комментариев
-var countCommentsNumber = function (comments) {
-  return comments.length;
 };
 
 // получаем адрес случайной фотографии для ленты
@@ -93,7 +72,7 @@ var generatePhotoUrl = function (index) {
 };
 
 // Создаем массив с фотографиями
-var createPhotosArray = function () {
+var createPhotos = function () {
   var photos = [];
   for (var i = 0; i < PHOTOS_NUMBER; i++) {
     photos.push(
@@ -101,7 +80,7 @@ var createPhotosArray = function () {
           url: generatePhotoUrl(i + 1),
           description: '',
           likes: getRandomNumber(15, 200),
-          comments: countCommentsNumber(createCommentsList())
+          comments: createComments()
         }
     );
   }
@@ -121,7 +100,7 @@ var createPicturesItem = function (photo) {
 
   pictureElement.querySelector('.picture__img').src = photo.url;
   pictureElement.querySelector('.picture__likes').textContent = photo.likes;
-  pictureElement.querySelector('.picture__comments').textContent = photo.comments;
+  pictureElement.querySelector('.picture__comments').textContent = photo.comments.length;
 
   return pictureElement;
 };
@@ -137,4 +116,98 @@ var createPicturesList = function (photos) {
 };
 
 // отображаем галлерею с фото
-picturesGallery.appendChild(createPicturesList(createPhotosArray()));
+var photos = createPhotos();
+picturesGallery.appendChild(createPicturesList(photos));
+
+
+// функция создания одного элемента разметки
+var createItem = function (tagName, className, text) {
+  var element = document.createElement(tagName);
+  element.classList.add(className);
+  if (text) {
+    element.textContent = text;
+  }
+  return element;
+};
+
+// создаем один комментарий
+var createCommentsItem = function (comment) {
+  var commentsItem = createItem('li', 'social__comment');
+
+  var image = createItem('img', 'social__picture');
+  image.src = comment.avatar;
+  image.alt = comment.name;
+  commentsItem.appendChild(image);
+
+  var text = createItem('p', 'social__text', comment.message);
+  commentsItem.appendChild(text);
+
+  return commentsItem;
+};
+
+// создаем DOM-элементы и заполняем их
+var createCommentsList = function (comments) {
+  var fragment = document.createDocumentFragment();
+
+  for (var i = 0; i < comments.length; i++) {
+    fragment.appendChild(createCommentsItem(comments[i]));
+  }
+  return fragment;
+};
+
+var bigPicture = document.querySelector('.big-picture');
+
+// заполняем его информацией
+var renderBigPicture = function (photo) {
+  var image = bigPicture.querySelector('.big-picture__img').querySelector('img');
+  image.src = photo.url;
+
+  var description = bigPicture.querySelector('.social__caption');
+  description.textContent = photo.description;
+
+  var likesCount = bigPicture.querySelector('.likes-count');
+  likesCount.textContent = photo.likes;
+
+  var commentsCount = bigPicture.querySelector('.comments-count');
+  commentsCount.textContent = photo.comments.length;
+
+  var commentsList = bigPicture.querySelector('.social__comments');
+  commentsList.innerHTML = '';
+  commentsList.appendChild(createCommentsList(photo.comments));
+
+  bigPicture.querySelector('.social__comment-count').classList.add('hidden');
+  bigPicture.querySelector('.comments-loader').classList.add('hidden');
+};
+
+// отображаем большую картинку
+var body = document.querySelector('body');
+var closeButton = bigPicture.querySelector('#picture-cancel');
+
+var onCloseButtonClick = function () {
+  hideBigPicture();
+};
+
+var onBigPictureEscPress = function (evt) {
+  if (evt.keyCode === ESCAPE_KEY) {
+    hideBigPicture();
+  }
+};
+
+var showBigPicture = function () {
+  renderBigPicture(photos[0]);
+  body.classList.add('modal-open');
+  bigPicture.classList.remove('hidden');
+
+  document.addEventListener('keydown', onBigPictureEscPress);
+  closeButton.addEventListener('click', onCloseButtonClick);
+};
+
+var hideBigPicture = function () {
+  body.classList.remove('modal-open');
+  bigPicture.classList.add('hidden');
+
+  document.removeEventListener('keydown', onBigPictureEscPress);
+  closeButton.removeEventListener('click', onCloseButtonClick);
+};
+
+showBigPicture();
