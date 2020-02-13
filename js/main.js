@@ -193,8 +193,8 @@ var onBigPictureEscPress = function (evt) {
   }
 };
 
-var showBigPicture = function () {
-  renderBigPicture(photos[0]);
+var showBigPicture = function (photo) {
+  renderBigPicture(photo);
   body.classList.add('modal-open');
   bigPicture.classList.remove('hidden');
 
@@ -210,4 +210,26 @@ var hideBigPicture = function () {
   closeButton.removeEventListener('click', onCloseButtonClick);
 };
 
-showBigPicture();
+// showBigPicture(photos[0]);
+
+// меняем фото в bigPictures по клику
+picturesGallery.addEventListener('click', function (evt) {
+  findTarget(evt);
+});
+
+var findTarget = function (evt) {
+  var target = evt.target.closest('.picture');
+  if (!target) {
+    return;
+  }
+  if (!picturesGallery.contains(target)) {
+    return;
+  }
+
+  var picturesList = picturesGallery.querySelectorAll('.picture');
+  for (var i = 0; i < picturesList.length; i++) {
+    if (picturesList[i] === target) {
+      showBigPicture(photos[i]);
+    }
+  }
+};
