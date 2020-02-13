@@ -181,29 +181,33 @@ var renderBigPicture = function (photo) {
 
 // отображаем большую картинку
 var body = document.querySelector('body');
-var pictureCancel = bigPicture.querySelector('#picture-cancel');
+var closeButton = bigPicture.querySelector('#picture-cancel');
+
+var onCloseButtonClick = function () {
+  hideBigPicture();
+};
+
+var onBigPictureEscPress = function (evt) {
+  if (evt.keyCode === ESCAPE_KEY) {
+    hideBigPicture();
+  }
+};
 
 var showBigPicture = function () {
   renderBigPicture(photos[0]);
   body.classList.add('modal-open');
   bigPicture.classList.remove('hidden');
 
-  document.addEventListener('keydown', onDocumentEscPress);
-  pictureCancel.addEventListener('click', hideBigPicture);
+  document.addEventListener('keydown', onBigPictureEscPress);
+  closeButton.addEventListener('click', onCloseButtonClick);
 };
 
 var hideBigPicture = function () {
   body.classList.remove('modal-open');
   bigPicture.classList.add('hidden');
 
-  document.removeEventListener('keydown', onDocumentEscPress);
-  pictureCancel.removeEventListener('click', hideBigPicture);
-};
-
-var onDocumentEscPress = function (evt) {
-  if (evt.keyCode === ESCAPE_KEY) {
-    hideBigPicture();
-  }
+  document.removeEventListener('keydown', onBigPictureEscPress);
+  closeButton.removeEventListener('click', onCloseButtonClick);
 };
 
 showBigPicture();
