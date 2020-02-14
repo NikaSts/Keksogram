@@ -244,21 +244,22 @@ var bar = uploadForm.querySelector('.effect-level__line');
 var pin = bar.querySelector('.effect-level__pin');
 var effectLevelInput = uploadForm.querySelector('.effect-level__value');
 var effectDepth = bar.querySelector('.effect-level__depth');
-
 pin.style.cursor = 'pointer';
 
 // открытие / закрытие окна
 uploadFileInput.addEventListener('change', function () {
+  openEditForm();
+});
+
+var openEditForm = function () {
   editImage.classList.remove('hidden');
   body.classList.add('modal-open');
-
   var file = uploadFileInput.files[0];
   uploadFileInput.name = file.name;
-
   cancelButton.addEventListener('click', onCancelButtonClick);
   document.addEventListener('keydown', onUploadFormEscPress);
   pin.addEventListener('mousedown', onPinMouseDown);
-});
+};
 
 var hideEditForm = function () {
   editImage.classList.add('hidden');
