@@ -233,3 +233,86 @@ var findTarget = function (evt) {
     }
   }
 };
+
+var uploadForm = document.querySelector('.img-upload__form');
+var uploadFileInput = uploadForm.querySelector('#upload-file');
+var editImage = uploadForm.querySelector('.img-upload__overlay');
+var cancelButton = uploadForm.querySelector('.img-upload__cancel');
+var hashtagsInput = uploadForm.querySelector('.text__hashtags');
+var descriptionInput = uploadForm.querySelector('.text__description');
+var bar = uploadForm.querySelector('.effect-level__line');
+var pin = bar.querySelector('.effect-level__pin');
+var effectLevelInput = uploadForm.querySelector('.effect-level__value');
+var effectDepth = bar.querySelector('.effect-level__depth');
+
+pin.style.cursor = 'pointer';
+
+// открытие / закрытие окна
+uploadFileInput.addEventListener('change', function () {
+  editImage.classList.remove('hidden');
+  body.classList.add('modal-open');
+
+  var file = uploadFileInput.files[0];
+  uploadFileInput.name = file.name;
+
+  cancelButton.addEventListener('click', onCancelButtonClick);
+  document.addEventListener('keydown', onUploadFormEscPress);
+  pin.addEventListener('mousedown', onPinMouseDown);
+});
+
+var hideEditForm = function () {
+  editImage.classList.add('hidden');
+  body.classList.remove('modal-open');
+
+  uploadFileInput.name = '';
+  cancelButton.removeEventListener('click', onCancelButtonClick);
+  document.removeEventListener('keydown', onUploadFormEscPress);
+  pin.removeEventListener('mousedown', onPinMouseDown);
+};
+
+var onCancelButtonClick = function () {
+  hideEditForm();
+};
+
+var onUploadFormEscPress = function (evt) {
+  if ((evt.keyCode === ESCAPE_KEY) && (evt.target !== hashtagsInput) && (evt.target !== descriptionInput)) {
+    hideEditForm();
+  }
+};
+
+// двиежние ползунка
+var onPinMouseDown = function (evt) {
+  evt.preventDefault();
+
+  var onPinMouseMove = function (moveEvt) {
+    moveEvt.preventDefault();
+
+    var barStart = bar.offsetLeft - pin.offsetWidth;
+    var barEnd = bar.offsetLeft + bar.offsetWidth - pin.offsetWidth;
+    var pinPosition = pin.offsetLeft + moveEvt.movementX;
+    var LimitMovementX = {
+      min: barStart,
+      max: barEnd
+    };
+
+    if (pinPosition < LimitMovementX.min) {
+      pinPosition = LimitMovementX.min;
+    }
+    if (pinPosition > LimitMovementX.max) {
+      pinPosition = LimitMovementX.max;
+    }
+    pin.style.left = pinPosition + 'px';
+    var effectInPercent = Math.floor((pinPosition / LimitMovementX.max) * 100);
+    effectLevelInput.setAttribute('value', effectInPercent);
+    effectDepth.style.width = effectInPercent + '%';
+  };
+
+  var onPinMouseUp = function (upEvt) {
+    upEvt.preventDefault();
+    document.removeEventListener('mousemove', onPinMouseMove);
+    document.removeEventListener('mouseup', onPinMouseUp);
+  };
+
+  document.addEventListener('mousemove', onPinMouseMove);
+  document.addEventListener('mouseup', onPinMouseUp);
+};
