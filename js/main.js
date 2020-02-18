@@ -247,12 +247,12 @@ uploadFileInput.addEventListener('change', function () {
 var openEditForm = function () {
   editImage.classList.remove('hidden');
   body.classList.add('modal-open');
+
   var file = uploadFileInput.files[0];
   uploadFileInput.name = file.name;
   cancelButton.addEventListener('click', onCancelButtonClick);
   document.addEventListener('keydown', onUploadFormEscPress);
   pin.addEventListener('mousedown', onPinMouseDown);
-  uploadForm.addEventListener('submit', onUploadFormSubmit);
 };
 
 var hideEditForm = function () {
@@ -263,7 +263,7 @@ var hideEditForm = function () {
   cancelButton.removeEventListener('click', onCancelButtonClick);
   document.removeEventListener('keydown', onUploadFormEscPress);
   pin.removeEventListener('mousedown', onPinMouseDown);
-  uploadForm.removeEventListener('clsbmituick', onUploadFormSubmit);
+  // uploadForm.removeEventListener('clsbmituick', onUploadFormSubmit);
 };
 
 var onCancelButtonClick = function () {
@@ -325,18 +325,12 @@ descriptionInput.setAttribute('maxlength', 140);
 
 var createHashtags = function () {
   var hashtags = hashtagsInput.value.trim().toLowerCase().split(' ');
-  for (var i = 0; i < hashtags.length; i++) {
-    hashtags[i].trim();
-  }
   return hashtags;
 };
 
-var checkSpecialSymbols = function (element) {
-  element.match(/^#[A-Za-zА-Яа-яЁё0-9]*/);
-};
-
 var checkHashtagsInputValidity = function (hashtags) {
-  if (hashtags !== []) {
+
+  if (hashtags.length > 0) {
     if (hashtags.length > MAX_HASHTAGS_NUMBER) {
       hashtagsInput.setCustomValidity('нельзя указать больше пяти хэш-тегов');
     }
@@ -350,7 +344,7 @@ var checkHashtagsInputValidity = function (hashtags) {
         hashtagsInput.setCustomValidity('хеш-тег не может состоять только из одной решётки');
       } else if (hashtag.length > MAX_HASHTAG_LENGTH) {
         hashtagsInput.setCustomValidity('максимальная длина одного хэш-тега 20 символов, включая решётку');
-      } else if (hashtags.every(checkSpecialSymbols) === false) {
+      } else if (!hashtag.match(/^([#]{1})([A-Za-zА-ЯЁа-яё0-9]*)$/)) {
         hashtagsInput.setCustomValidity('название хэш-тега должно состоять только из букв и цифр');
       } else if (hashtags.indexOf(hashtag) !== hashtags.lastIndexOf(hashtag)) {
         hashtagsInput.setCustomValidity('один и тот же хэш-тег не может быть использован дважды');
@@ -360,5 +354,10 @@ var checkHashtagsInputValidity = function (hashtags) {
 };
 
 var onUploadFormSubmit = function () {
-  checkHashtagsInputValidity(createHashtags);
+  var hashtags = createHashtags().filter(function (hashtag) {
+    return hashtag !== '';
+  });
+  checkHashtagsInputValidity(hashtags);
 };
+
+hashtagsInput.addEventListener('change', onUploadFormSubmit);
