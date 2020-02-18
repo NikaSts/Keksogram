@@ -49,7 +49,7 @@ var getRandomPhrases = function (phrases) {
 };
 
 // создаем один комментарий
-var createCommemtsElement = function () {
+var createCommemtsItem = function () {
   var comment =
   {
     avatar: generateAvatarUrl(),
@@ -64,7 +64,7 @@ var createComments = function () {
   var commentCount = getRandomNumber(1, MAX_COMMENTS_NUMBER);
   var comments = [];
   for (var i = 0; i < commentCount; i++) {
-    comments.push(createCommemtsElement());
+    comments.push(createCommemtsItem());
   }
   return comments;
 };
@@ -98,7 +98,7 @@ var templatePicture = document.querySelector('#picture')
 var picturesGallery = document.querySelector('.pictures');
 
 // Копируем шаблон и вставляем к него данные
-var createPicturesItem = function (photo, index) {
+var createPicturesElement = function (photo, index) {
   var pictureElement = templatePicture.cloneNode(true);
 
   pictureElement.setAttribute('data-index', index);
@@ -114,7 +114,7 @@ var createPicturesList = function (photos) {
   var fragment = document.createDocumentFragment();
 
   for (var i = 0; i < photos.length; i++) {
-    fragment.appendChild(createPicturesItem(photos[i], i));
+    fragment.appendChild(createPicturesElement(photos[i], i));
   }
   return fragment;
 };
@@ -125,7 +125,7 @@ picturesGallery.appendChild(createPicturesList(photos));
 
 
 // функция создания одного элемента разметки
-var createItem = function (tagName, className, text) {
+var createCustomElement = function (tagName, className, text) {
   var element = document.createElement(tagName);
   element.classList.add(className);
   if (text) {
@@ -135,18 +135,18 @@ var createItem = function (tagName, className, text) {
 };
 
 // создаем один комментарий
-var createCommentsItem = function (comment) {
-  var commentsItem = createItem('li', 'social__comment');
+var createCommentsElement = function (comment) {
+  var commentsElement = createCustomElement('li', 'social__comment');
 
-  var image = createItem('img', 'social__picture');
+  var image = createCustomElement('img', 'social__picture');
   image.src = comment.avatar;
   image.alt = comment.name;
-  commentsItem.appendChild(image);
+  commentsElement.appendChild(image);
 
-  var text = createItem('p', 'social__text', comment.message);
-  commentsItem.appendChild(text);
+  var text = createCustomElement('p', 'social__text', comment.message);
+  commentsElement.appendChild(text);
 
-  return commentsItem;
+  return commentsElement;
 };
 
 // создаем DOM-элементы и заполняем их
@@ -154,7 +154,7 @@ var createCommentsList = function (comments) {
   var fragment = document.createDocumentFragment();
 
   for (var i = 0; i < comments.length; i++) {
-    fragment.appendChild(createCommentsItem(comments[i]));
+    fragment.appendChild(createCommentsElement(comments[i]));
   }
   return fragment;
 };
@@ -250,9 +250,11 @@ var openEditForm = function () {
 
   var file = uploadFileInput.files[0];
   uploadFileInput.name = file.name;
+
   cancelButton.addEventListener('click', onCancelButtonClick);
   document.addEventListener('keydown', onUploadFormEscPress);
   pin.addEventListener('mousedown', onPinMouseDown);
+  hashtagsInput.addEventListener('change', onHashtagsInputChange);
 };
 
 var hideEditForm = function () {
@@ -260,10 +262,11 @@ var hideEditForm = function () {
   body.classList.remove('modal-open');
 
   uploadFileInput.name = '';
+
   cancelButton.removeEventListener('click', onCancelButtonClick);
   document.removeEventListener('keydown', onUploadFormEscPress);
   pin.removeEventListener('mousedown', onPinMouseDown);
-  // uploadForm.removeEventListener('clsbmituick', onUploadFormSubmit);
+  hashtagsInput.removeEventListener('change', onHashtagsInputChange);
 };
 
 var onCancelButtonClick = function () {
@@ -329,11 +332,9 @@ var createHashtags = function () {
 };
 
 var checkHashtagsInputValidity = function (hashtags) {
-
-  if (hashtags.length > 0) {
-    if (hashtags.length > MAX_HASHTAGS_NUMBER) {
-      hashtagsInput.setCustomValidity('нельзя указать больше пяти хэш-тегов');
-    }
+  if (hashtags.length > MAX_HASHTAGS_NUMBER) {
+    hashtagsInput.setCustomValidity('нельзя указать больше пяти хэш-тегов');
+  } else {
 
     for (var i = 0; i < hashtags.length; i++) {
       var hashtag = hashtags[i];
@@ -344,20 +345,22 @@ var checkHashtagsInputValidity = function (hashtags) {
         hashtagsInput.setCustomValidity('хеш-тег не может состоять только из одной решётки');
       } else if (hashtag.length > MAX_HASHTAG_LENGTH) {
         hashtagsInput.setCustomValidity('максимальная длина одного хэш-тега 20 символов, включая решётку');
-      } else if (!hashtag.match(/^([#]{1})([A-Za-zА-ЯЁа-яё0-9]*)$/)) {
+      } else if (!hashtag.substring(1).match(/^([A-Za-zА-ЯЁа-яё0-9]*)$/)) {
         hashtagsInput.setCustomValidity('название хэш-тега должно состоять только из букв и цифр');
       } else if (hashtags.indexOf(hashtag) !== hashtags.lastIndexOf(hashtag)) {
         hashtagsInput.setCustomValidity('один и тот же хэш-тег не может быть использован дважды');
+      } else {
+        hashtagsInput.setCustomValidity('');
       }
     }
   }
 };
 
-var onUploadFormSubmit = function () {
+var onHashtagsInputChange = function () {
   var hashtags = createHashtags().filter(function (hashtag) {
     return hashtag !== '';
   });
-  checkHashtagsInputValidity(hashtags);
+  if (hashtags.length > 0) {
+    checkHashtagsInputValidity(hashtags);
+  }
 };
-
-hashtagsInput.addEventListener('change', onUploadFormSubmit);
