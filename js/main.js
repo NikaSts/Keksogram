@@ -13,6 +13,9 @@ var AVATARS_NUMBER = 6;
 var MAX_COMMENTS_NUMBER = 8;
 var PHOTOS_NUMBER = 25;
 var ESCAPE_KEY = 27;
+var MAX_HASHTAGS_NUMBER = 5;
+var MAX_HASHTAG_LENGTH = 20;
+var MIN_HASHTAG_LENGTH = 2;
 
 
 // Получение случайного числа в интервале [min,  max)
@@ -95,9 +98,10 @@ var templatePicture = document.querySelector('#picture')
 var picturesGallery = document.querySelector('.pictures');
 
 // Копируем шаблон и вставляем к него данные
-var createPicturesItem = function (photo) {
+var createPicturesItem = function (photo, index) {
   var pictureElement = templatePicture.cloneNode(true);
 
+  pictureElement.setAttribute('data-index', index);
   pictureElement.querySelector('.picture__img').src = photo.url;
   pictureElement.querySelector('.picture__likes').textContent = photo.likes;
   pictureElement.querySelector('.picture__comments').textContent = photo.comments.length;
@@ -110,7 +114,7 @@ var createPicturesList = function (photos) {
   var fragment = document.createDocumentFragment();
 
   for (var i = 0; i < photos.length; i++) {
-    fragment.appendChild(createPicturesItem(photos[i]));
+    fragment.appendChild(createPicturesItem(photos[i], i));
   }
   return fragment;
 };
@@ -210,8 +214,6 @@ var hideBigPicture = function () {
   closeButton.removeEventListener('click', onCloseButtonClick);
 };
 
-// showBigPicture(photos[0]);
-
 // меняем фото в bigPictures по клику
 picturesGallery.addEventListener('click', function (evt) {
   findTarget(evt);
@@ -226,27 +228,18 @@ var findTarget = function (evt) {
     return;
   }
 
-  var picturesList = picturesGallery.querySelectorAll('.picture');
-  for (var i = 0; i < picturesList.length; i++) {
-    if (picturesList[i] === target) {
-      showBigPicture(photos[i]);
-    }
-  }
+  var index = target.getAttribute('data-index');
+  showBigPicture(photos[index]);
 };
 
+// открытие / закрытие окна
 var uploadForm = document.querySelector('.img-upload__form');
 var uploadFileInput = uploadForm.querySelector('#upload-file');
 var editImage = uploadForm.querySelector('.img-upload__overlay');
 var cancelButton = uploadForm.querySelector('.img-upload__cancel');
 var hashtagsInput = uploadForm.querySelector('.text__hashtags');
 var descriptionInput = uploadForm.querySelector('.text__description');
-var bar = uploadForm.querySelector('.effect-level__line');
-var pin = bar.querySelector('.effect-level__pin');
-var effectLevelInput = uploadForm.querySelector('.effect-level__value');
-var effectDepth = bar.querySelector('.effect-level__depth');
-pin.style.cursor = 'pointer';
 
-// открытие / закрытие окна
 uploadFileInput.addEventListener('change', function () {
   openEditForm();
 });
@@ -259,6 +252,7 @@ var openEditForm = function () {
   cancelButton.addEventListener('click', onCancelButtonClick);
   document.addEventListener('keydown', onUploadFormEscPress);
   pin.addEventListener('mousedown', onPinMouseDown);
+  uploadForm.addEventListener('submit', onUploadFormSubmit);
 };
 
 var hideEditForm = function () {
@@ -269,6 +263,7 @@ var hideEditForm = function () {
   cancelButton.removeEventListener('click', onCancelButtonClick);
   document.removeEventListener('keydown', onUploadFormEscPress);
   pin.removeEventListener('mousedown', onPinMouseDown);
+  uploadForm.removeEventListener('clsbmituick', onUploadFormSubmit);
 };
 
 var onCancelButtonClick = function () {
@@ -282,6 +277,12 @@ var onUploadFormEscPress = function (evt) {
 };
 
 // двиежние ползунка
+var bar = uploadForm.querySelector('.effect-level__line');
+var pin = bar.querySelector('.effect-level__pin');
+var effectLevelInput = uploadForm.querySelector('.effect-level__value');
+var effectDepth = bar.querySelector('.effect-level__depth');
+pin.style.cursor = 'pointer';
+
 var onPinMouseDown = function (evt) {
   evt.preventDefault();
 
@@ -291,19 +292,19 @@ var onPinMouseDown = function (evt) {
     var barStart = bar.offsetLeft - pin.offsetWidth;
     var barEnd = bar.offsetLeft + bar.offsetWidth - pin.offsetWidth;
     var pinPosition = pin.offsetLeft + moveEvt.movementX;
-    var LimitMovementX = {
+    var limitMovementX = {
       min: barStart,
       max: barEnd
     };
 
-    if (pinPosition < LimitMovementX.min) {
-      pinPosition = LimitMovementX.min;
+    if (pinPosition < limitMovementX.min) {
+      pinPosition = limitMovementX.min;
     }
-    if (pinPosition > LimitMovementX.max) {
-      pinPosition = LimitMovementX.max;
+    if (pinPosition > limitMovementX.max) {
+      pinPosition = limitMovementX.max;
     }
     pin.style.left = pinPosition + 'px';
-    var effectInPercent = Math.floor((pinPosition / LimitMovementX.max) * 100);
+    var effectInPercent = Math.floor((pinPosition / limitMovementX.max) * 100);
     effectLevelInput.setAttribute('value', effectInPercent);
     effectDepth.style.width = effectInPercent + '%';
   };
@@ -316,4 +317,48 @@ var onPinMouseDown = function (evt) {
 
   document.addEventListener('mousemove', onPinMouseMove);
   document.addEventListener('mouseup', onPinMouseUp);
+};
+
+// валидация полей формы
+
+descriptionInput.setAttribute('maxlength', 140);
+
+var createHashtags = function () {
+  var hashtags = hashtagsInput.value.trim().toLowerCase().split(' ');
+  for (var i = 0; i < hashtags.length; i++) {
+    hashtags[i].trim();
+  }
+  return hashtags;
+};
+
+var checkSpecialSymbols = function (element) {
+  element.match(/^#[A-Za-zА-Яа-яЁё0-9]*/);
+};
+
+var checkHashtagsInputValidity = function (hashtags) {
+  if (hashtags !== []) {
+    if (hashtags.length > MAX_HASHTAGS_NUMBER) {
+      hashtagsInput.setCustomValidity('нельзя указать больше пяти хэш-тегов');
+    }
+
+    for (var i = 0; i < hashtags.length; i++) {
+      var hashtag = hashtags[i];
+
+      if (hashtag[0] !== '#') {
+        hashtagsInput.setCustomValidity('хэш-тег должен начинаться с символа # (решётка)');
+      } else if (hashtag.length < MIN_HASHTAG_LENGTH) {
+        hashtagsInput.setCustomValidity('хеш-тег не может состоять только из одной решётки');
+      } else if (hashtag.length > MAX_HASHTAG_LENGTH) {
+        hashtagsInput.setCustomValidity('максимальная длина одного хэш-тега 20 символов, включая решётку');
+      } else if (hashtags.every(checkSpecialSymbols) === false) {
+        hashtagsInput.setCustomValidity('название хэш-тега должно состоять только из букв и цифр');
+      } else if (hashtags.indexOf(hashtag) !== hashtags.lastIndexOf(hashtag)) {
+        hashtagsInput.setCustomValidity('один и тот же хэш-тег не может быть использован дважды');
+      }
+    }
+  }
+};
+
+var onUploadFormSubmit = function () {
+  checkHashtagsInputValidity(createHashtags);
 };
