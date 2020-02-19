@@ -248,9 +248,6 @@ var openEditForm = function () {
   editImage.classList.remove('hidden');
   body.classList.add('modal-open');
 
-  var file = uploadFileInput.files[0];
-  uploadFileInput.name = file.name;
-
   cancelButton.addEventListener('click', onCancelButtonClick);
   document.addEventListener('keydown', onUploadFormEscPress);
   pin.addEventListener('mousedown', onPinMouseDown);
@@ -260,8 +257,6 @@ var openEditForm = function () {
 var hideEditForm = function () {
   editImage.classList.add('hidden');
   body.classList.remove('modal-open');
-
-  uploadFileInput.name = '';
 
   cancelButton.removeEventListener('click', onCancelButtonClick);
   document.removeEventListener('keydown', onUploadFormEscPress);
@@ -322,9 +317,7 @@ var onPinMouseDown = function (evt) {
   document.addEventListener('mouseup', onPinMouseUp);
 };
 
-// валидация полей формы
-
-descriptionInput.setAttribute('maxlength', 140);
+// валидация формы
 
 var createHashtags = function () {
   var hashtags = hashtagsInput.value.trim().toLowerCase().split(' ');
