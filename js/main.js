@@ -254,6 +254,7 @@ var openEditForm = function () {
   editImage.classList.remove('hidden');
   body.classList.add('modal-open');
 
+  setMaxScaleLevel();
   showBar('effect-none');
   imagePreview.className = 'img-upload__preview';
 
@@ -490,7 +491,6 @@ var setMaxScaleLevel = function () {
 };
 
 var showBar = function (effect) {
-  setMaxScaleLevel();
   setMaxEffectLevel();
 
   if (effect === 'effect-none') {
