@@ -295,11 +295,6 @@ var createHashtags = function () {
   return hashtags;
 };
 
-var checkDoubleHashtags = function (hashtags, hashtag) {
-  var index = hashtags.indexOf(hashtag) + 1;
-  return hashtags.indexOf(hashtag, index);
-};
-
 var checkHashtagsInputValidity = function (hashtags) {
   if (hashtags.length > MAX_HASHTAGS_NUMBER) {
     hashtagsInput.setCustomValidity('нельзя указать больше пяти хэш-тегов');
@@ -316,7 +311,7 @@ var checkHashtagsInputValidity = function (hashtags) {
         hashtagsInput.setCustomValidity('максимальная длина одного хэш-тега 20 символов, включая решётку');
       } else if (!hashtag.substring(1).match(/^([A-Za-zА-ЯЁа-яё0-9]*)$/)) {
         hashtagsInput.setCustomValidity('название хэш-тега должно состоять только из букв и цифр');
-      } else if (checkDoubleHashtags(hashtags, hashtag) !== -1) {
+      } else if (hashtags.indexOf(hashtag, i + 1) !== -1) {
         hashtagsInput.setCustomValidity('один и тот же хэш-тег не может быть использован дважды');
       } else {
         hashtagsInput.setCustomValidity('');
