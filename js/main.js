@@ -300,29 +300,27 @@ var createHashtags = function () {
 var checkHashtagsInputValidity = function (hashtags) {
   if (hashtags.length > MAX_HASHTAGS_NUMBER) {
     hashtagsInput.setCustomValidity('нельзя указать больше пяти хэш-тегов');
-  } else {
+  }
+  for (var i = 0; i < hashtags.length; i++) {
+    var hashtag = hashtags[i];
 
-    for (var i = 0; i < hashtags.length; i++) {
-      var hashtag = hashtags[i];
-
-      if (hashtag[0] !== '#') {
-        hashtagsInput.setCustomValidity('хэш-тег должен начинаться с символа # (решётка)');
-        break;
-      } else if (hashtag.length < MIN_HASHTAG_LENGTH) {
-        hashtagsInput.setCustomValidity('хеш-тег не может состоять только из одной решётки');
-        break;
-      } else if (hashtag.length > MAX_HASHTAG_LENGTH) {
-        hashtagsInput.setCustomValidity('максимальная длина одного хэш-тега 20 символов, включая решётку');
-        break;
-      } else if (!hashtag.substring(1).match(/^([A-Za-zА-ЯЁа-яё0-9]*)$/)) {
-        hashtagsInput.setCustomValidity('название хэш-тега должно состоять только из букв и цифр');
-        break;
-      } else if (hashtags.indexOf(hashtag, i + 1) !== -1) {
-        hashtagsInput.setCustomValidity('один и тот же хэш-тег не может быть использован дважды');
-        break;
-      } else {
-        hashtagsInput.setCustomValidity('');
-      }
+    if (hashtag[0] !== '#') {
+      hashtagsInput.setCustomValidity('хэш-тег должен начинаться с символа # (решётка)');
+      break;
+    } else if (hashtag.length < MIN_HASHTAG_LENGTH) {
+      hashtagsInput.setCustomValidity('хеш-тег не может состоять только из одной решётки');
+      break;
+    } else if (hashtag.length > MAX_HASHTAG_LENGTH) {
+      hashtagsInput.setCustomValidity('максимальная длина одного хэш-тега 20 символов, включая решётку');
+      break;
+    } else if (!hashtag.substring(1).match(/^([A-Za-zА-ЯЁа-яё0-9]*)$/)) {
+      hashtagsInput.setCustomValidity('название хэш-тега должно состоять только из букв и цифр');
+      break;
+    } else if (hashtags.indexOf(hashtag, i + 1) !== -1) {
+      hashtagsInput.setCustomValidity('один и тот же хэш-тег не может быть использован дважды');
+      break;
+    } else {
+      hashtagsInput.setCustomValidity('');
     }
   }
 };
@@ -350,18 +348,14 @@ var onScaleControlClick = function (evt) {
 
   var currentValueString = scaleInput.value;
   var currentValueInteger = parseInt(currentValueString, 10);
-  var limitInputValue = {
-    min: MIN_SCALE_LEVEL,
-    max: MAX_SCALE_LEVEL
-  };
 
   if (target === scaleControlSmaller) {
-    if (currentValueInteger > limitInputValue.min) {
+    if (currentValueInteger > MIN_SCALE_LEVEL) {
       currentValueInteger += -(SCALE_CONTROL_STEP);
     }
   }
   if (target === scaleControlBigger) {
-    if (currentValueInteger < limitInputValue.max) {
+    if (currentValueInteger < MAX_SCALE_LEVEL) {
       currentValueInteger += SCALE_CONTROL_STEP;
     }
   }
