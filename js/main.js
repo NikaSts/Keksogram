@@ -304,7 +304,7 @@ var checkHashtagsInputValidity = function (hashtags) {
 
     for (var i = 0; i < hashtags.length; i++) {
       var hashtag = hashtags[i];
-      console.log(i);
+
       if (hashtag[0] !== '#') {
         hashtagsInput.setCustomValidity('хэш-тег должен начинаться с символа # (решётка)');
         break;
