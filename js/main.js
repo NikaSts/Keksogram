@@ -18,6 +18,8 @@ var MAX_HASHTAG_LENGTH = 20;
 var MIN_HASHTAG_LENGTH = 2;
 var SCALE_CONTROL_STEP = 25;
 var MAX_EFFECT_LEVEL = 100;
+var MIN_SCALE_LEVEL = 25;
+var MAX_SCALE_LEVEL = 100;
 
 
 // Получение случайного числа в интервале [min,  max)
@@ -344,8 +346,8 @@ var onScaleControlClick = function (evt) {
   var currentValueString = scaleInput.value;
   var currentValueInteger = parseInt(currentValueString, 10);
   var limitInputValue = {
-    min: 25,
-    max: 100
+    min: MIN_SCALE_LEVEL,
+    max: MAX_SCALE_LEVEL
   };
 
   if (target === scaleControlSmaller) {
@@ -358,7 +360,7 @@ var onScaleControlClick = function (evt) {
       currentValueInteger += SCALE_CONTROL_STEP;
     }
   }
-  imagePreview.style.transform = 'scale(' + currentValueInteger / 100 + ')';
+  imagePreview.style.transform = 'scale(' + currentValueInteger / MAX_SCALE_LEVEL + ')';
   scaleInput.value = currentValueInteger + '%';
 };
 
@@ -455,7 +457,7 @@ var heat = {
 };
 
 var getEffectDepth = function (limit) {
-  return ((effectLevelInput.value * (limit.max - limit.min)) / 100) + limit.min;
+  return ((effectLevelInput.value * (limit.max - limit.min)) / MAX_EFFECT_LEVEL) + limit.min;
 };
 var applyFilter = function (effect) {
   if (effect === 'effect-chrome') {
@@ -476,13 +478,13 @@ var applyFilter = function (effect) {
 };
 
 var setMaxEffectLevel = function () {
-  pin.style.left = bar.offsetLeft + bar.offsetWidth - pin.offsetWidth + 'px';
-  effectDepth.style.width = '100%';
+  pin.style.left = MAX_EFFECT_LEVEL + '%';
+  effectDepth.style.width = MAX_EFFECT_LEVEL + '%';
 };
 
 var setMaxScaleLevel = function () {
   imagePreview.style.transform = 'scale(1)';
-  scaleInput.value = '100%';
+  scaleInput.value = MAX_SCALE_LEVEL + '%';
 };
 
 var showBar = function (effect) {
