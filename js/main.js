@@ -18,6 +18,8 @@ var MAX_HASHTAG_LENGTH = 20;
 var MIN_HASHTAG_LENGTH = 2;
 var SCALE_CONTROL_STEP = 25;
 var MAX_EFFECT_LEVEL = 100;
+var MIN_SCALE_LEVEL = 25;
+var MAX_SCALE_LEVEL = 100;
 
 
 // Получение случайного числа в интервале [min,  max)
@@ -295,32 +297,30 @@ var createHashtags = function () {
   return hashtags;
 };
 
-var checkDoubleHashtags = function (hashtags, hashtag) {
-  var index = hashtags.indexOf(hashtag) + 1;
-  return hashtags.indexOf(hashtag, index);
-};
-
 var checkHashtagsInputValidity = function (hashtags) {
   if (hashtags.length > MAX_HASHTAGS_NUMBER) {
     hashtagsInput.setCustomValidity('нельзя указать больше пяти хэш-тегов');
-  } else {
+  }
+  for (var i = 0; i < hashtags.length; i++) {
+    var hashtag = hashtags[i];
 
-    for (var i = 0; i < hashtags.length; i++) {
-      var hashtag = hashtags[i];
-
-      if (hashtag[0] !== '#') {
-        hashtagsInput.setCustomValidity('хэш-тег должен начинаться с символа # (решётка)');
-      } else if (hashtag.length < MIN_HASHTAG_LENGTH) {
-        hashtagsInput.setCustomValidity('хеш-тег не может состоять только из одной решётки');
-      } else if (hashtag.length > MAX_HASHTAG_LENGTH) {
-        hashtagsInput.setCustomValidity('максимальная длина одного хэш-тега 20 символов, включая решётку');
-      } else if (!hashtag.substring(1).match(/^([A-Za-zА-ЯЁа-яё0-9]*)$/)) {
-        hashtagsInput.setCustomValidity('название хэш-тега должно состоять только из букв и цифр');
-      } else if (checkDoubleHashtags(hashtags, hashtag) !== -1) {
-        hashtagsInput.setCustomValidity('один и тот же хэш-тег не может быть использован дважды');
-      } else {
-        hashtagsInput.setCustomValidity('');
-      }
+    if (hashtag[0] !== '#') {
+      hashtagsInput.setCustomValidity('хэш-тег должен начинаться с символа # (решётка)');
+      break;
+    } else if (hashtag.length < MIN_HASHTAG_LENGTH) {
+      hashtagsInput.setCustomValidity('хеш-тег не может состоять только из одной решётки');
+      break;
+    } else if (hashtag.length > MAX_HASHTAG_LENGTH) {
+      hashtagsInput.setCustomValidity('максимальная длина одного хэш-тега 20 символов, включая решётку');
+      break;
+    } else if (!hashtag.substring(1).match(/^([A-Za-zА-ЯЁа-яё0-9]*)$/)) {
+      hashtagsInput.setCustomValidity('название хэш-тега должно состоять только из букв и цифр');
+      break;
+    } else if (hashtags.indexOf(hashtag, i + 1) !== -1) {
+      hashtagsInput.setCustomValidity('один и тот же хэш-тег не может быть использован дважды');
+      break;
+    } else {
+      hashtagsInput.setCustomValidity('');
     }
   }
 };
@@ -348,22 +348,18 @@ var onScaleControlClick = function (evt) {
 
   var currentValueString = scaleInput.value;
   var currentValueInteger = parseInt(currentValueString, 10);
-  var limitInputValue = {
-    min: 25,
-    max: 100
-  };
 
   if (target === scaleControlSmaller) {
-    if (currentValueInteger > limitInputValue.min) {
+    if (currentValueInteger > MIN_SCALE_LEVEL) {
       currentValueInteger += -(SCALE_CONTROL_STEP);
     }
   }
   if (target === scaleControlBigger) {
-    if (currentValueInteger < limitInputValue.max) {
+    if (currentValueInteger < MAX_SCALE_LEVEL) {
       currentValueInteger += SCALE_CONTROL_STEP;
     }
   }
-  imagePreview.style.transform = 'scale(' + currentValueInteger / 100 + ')';
+  imagePreview.style.transform = 'scale(' + currentValueInteger / MAX_SCALE_LEVEL + ')';
   scaleInput.value = currentValueInteger + '%';
 };
 
@@ -460,7 +456,7 @@ var heat = {
 };
 
 var getEffectDepth = function (limit) {
-  return ((effectLevelInput.value * (limit.max - limit.min)) / 100) + limit.min;
+  return ((effectLevelInput.value * (limit.max - limit.min)) / MAX_EFFECT_LEVEL) + limit.min;
 };
 var applyFilter = function (effect) {
   if (effect === 'effect-chrome') {
@@ -481,13 +477,13 @@ var applyFilter = function (effect) {
 };
 
 var setMaxEffectLevel = function () {
-  pin.style.left = bar.offsetLeft + bar.offsetWidth - pin.offsetWidth + 'px';
-  effectDepth.style.width = '100%';
+  pin.style.left = MAX_EFFECT_LEVEL + '%';
+  effectDepth.style.width = MAX_EFFECT_LEVEL + '%';
 };
 
 var setMaxScaleLevel = function () {
   imagePreview.style.transform = 'scale(1)';
-  scaleInput.value = '100%';
+  scaleInput.value = MAX_SCALE_LEVEL + '%';
 };
 
 var showBar = function (effect) {
