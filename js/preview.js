@@ -2,7 +2,6 @@
 
 (function () {
 
-  var ESCAPE_KEY = 27;
 
   var body = document.querySelector('body');
   var uploadForm = document.querySelector('.img-upload__form');
@@ -62,7 +61,7 @@
   };
 
   var onUploadFormEscPress = function (evt) {
-    if ((evt.keyCode === ESCAPE_KEY) && (evt.target !== hashtagsInput) && (evt.target !== descriptionInput)) {
+    if ((evt.keyCode === window.utils.ESCAPE_KEY) && (evt.target !== hashtagsInput) && (evt.target !== descriptionInput)) {
       hideEditForm();
     }
   };

@@ -86,7 +86,7 @@
     return photos;
   };
 
-  window.data = {
+  window.mock = {
     get: createPhotos
   };
 

@@ -1,7 +1,6 @@
 'use strict';
 
 (function () {
-  var ESCAPE_KEY = 27;
 
   // функция создания одного элемента разметки
   var createCustomElement = function (tagName, className, text) {
@@ -71,7 +70,7 @@
   };
 
   var onBigPictureEscPress = function (evt) {
-    if (evt.keyCode === ESCAPE_KEY) {
+    if (evt.keyCode === window.utils.ESCAPE_KEY) {
       hideBigPicture();
     }
   };
