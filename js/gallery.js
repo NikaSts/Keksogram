@@ -22,7 +22,7 @@
   };
 
 
-  var onLoad = function (photos) {
+  var createPicturesList = function (photos) {
     var fragment = document.createDocumentFragment();
 
     for (var i = 0; i < photos.length; i++) {
@@ -35,7 +35,8 @@
     };
   };
 
-  var onError = function (errorMessage) {
+
+  var showErrorMessage = function (errorMessage) {
     var node = document.createElement('div');
     node.style = 'z-index: 100; margin: 0 auto; text-align: center; background-color: red;';
     node.style.position = 'absolute';
@@ -47,7 +48,7 @@
     document.body.insertAdjacentElement('afterbegin', node);
   };
 
-  window.backend.load(onLoad, onError);
+  window.backend.load(createPicturesList, showErrorMessage);
 
 
   // меняем превью фото по клику
