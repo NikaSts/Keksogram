@@ -26,6 +26,7 @@
   var setCustomValidityMessage = function (hashtags) {
     if (hashtags.length > MAX_HASHTAGS_NUMBER) {
       hashtagsInput.setCustomValidity('нельзя указать больше пяти хэш-тегов');
+      return;
     }
     for (var i = 0; i < hashtags.length; i++) {
       var hashtag = hashtags[i];

@@ -1,4 +1,5 @@
 'use strict';
+
 (function () {
 
   // находим шаблон и его содержимое в документе
@@ -20,19 +21,35 @@
     return pictureElement;
   };
 
-  // создаем DOM-элементы и заполняем их
+
   var createPicturesList = function (photos) {
     var fragment = document.createDocumentFragment();
 
     for (var i = 0; i < photos.length; i++) {
       fragment.appendChild(createPictureElement(photos[i], i));
     }
-    return fragment;
+    picturesGallery.appendChild(fragment);
+    var userPhotos = photos;
+    window.gallery = {
+      userPhotos: userPhotos
+    };
   };
 
-  // отображаем галлерею с фото
-  var photos = window.data.get();
-  picturesGallery.appendChild(createPicturesList(photos));
+
+  var showErrorMessage = function (errorMessage) {
+    var node = document.createElement('div');
+    node.style = 'z-index: 100; margin: 0 auto; text-align: center; background-color: red;';
+    node.style.position = 'absolute';
+    node.style.left = 0;
+    node.style.right = 0;
+    node.style.fontSize = '18px';
+
+    node.textContent = errorMessage;
+    document.body.insertAdjacentElement('afterbegin', node);
+  };
+
+  window.backend.load(createPicturesList, showErrorMessage);
+
 
   // меняем превью фото по клику
   picturesGallery.addEventListener('click', function (evt) {
@@ -48,8 +65,9 @@
       return;
     }
 
+    var userPhotos = window.gallery.userPhotos;
     var index = target.dataset.index;
-    window.picture.show(photos[index]);
+    window.picture.show(userPhotos[index]);
   };
 
 }());
