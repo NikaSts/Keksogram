@@ -6,8 +6,7 @@
   var MAX_HASHTAG_LENGTH = 20;
   var MIN_HASHTAG_LENGTH = 2;
 
-  var uploadForm = document.querySelector('.img-upload__form');
-  var hashtagsInput = uploadForm.querySelector('.text__hashtags');
+  var hashtagsInput = window.utils.hashtagsInput;
 
   var createHashtags = function () {
     var hashtags = hashtagsInput.value.trim().toLowerCase().split(' ');

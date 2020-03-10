@@ -29,26 +29,24 @@
       fragment.appendChild(createPictureElement(photos[i], i));
     }
     picturesGallery.appendChild(fragment);
-    var userPhotos = photos;
-    window.gallery = {
-      userPhotos: userPhotos
-    };
   };
-
 
   var showErrorMessage = function (errorMessage) {
-    var node = document.createElement('div');
-    node.style = 'z-index: 100; margin: 0 auto; text-align: center; background-color: red;';
-    node.style.position = 'absolute';
-    node.style.left = 0;
-    node.style.right = 0;
-    node.style.fontSize = '18px';
-
-    node.textContent = errorMessage;
-    document.body.insertAdjacentElement('afterbegin', node);
+    window.message.error(errorMessage);
   };
 
-  window.backend.load(createPicturesList, showErrorMessage);
+  window.backend.load(
+      function (photos) {
+        createPicturesList(photos);
+
+        var userPhotos = photos;
+        window.gallery = {
+          userPhotos: userPhotos
+        };
+      },
+      function (errorMessage) {
+        showErrorMessage(errorMessage);
+      });
 
 
   // меняем превью фото по клику

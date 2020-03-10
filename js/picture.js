@@ -2,6 +2,9 @@
 
 (function () {
 
+  var bigPicture = document.querySelector('.big-picture');
+
+
   // функция создания одного элемента разметки
   var createCustomElement = function (tagName, className, text) {
     var element = document.createElement(tagName);
@@ -37,7 +40,6 @@
     return fragment;
   };
 
-  var bigPicture = document.querySelector('.big-picture');
 
   // заполняем его информацией
   var renderBigPicture = function (photo) {
