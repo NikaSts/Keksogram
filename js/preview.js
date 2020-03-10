@@ -6,7 +6,7 @@
   var body = document.querySelector('body');
   var editForm = window.utils.editForm;
   var editImage = window.utils.editImage;
-  var hashtagsInput = window.utils.hashtagsInput;
+  var hashtagsInput = editForm.querySelector('.text__hashtags');
   var imageScale = window.utils.imageScale;
   var uploadFileInput = editForm.querySelector('#upload-file');
   var cancelButton = editForm.querySelector('.img-upload__cancel');
@@ -15,7 +15,6 @@
   var pin = window.utils.pin;
   var scaleInput = window.utils.scaleInput;
   var imagePreview = window.utils.imagePreview;
-  var submitButton = editForm.querySelector('.img-upload__submit');
 
 
   uploadFileInput.addEventListener('change', function () {
@@ -37,7 +36,7 @@
     hashtagsInput.addEventListener('change', onHashtagsInputChange);
     imageScale.addEventListener('click', onScaleControlClick);
     effectsList.addEventListener('click', onEffectButtonClick);
-    submitButton.addEventListener('click', onSubmitButtonClick);
+    editForm.addEventListener('submit', onEditFormSubmit);
   };
 
   var hideEditForm = function () {
@@ -50,7 +49,7 @@
     hashtagsInput.removeEventListener('change', onHashtagsInputChange);
     imageScale.removeEventListener('click', onScaleControlClick);
     effectsList.removeEventListener('click', onEffectButtonClick);
-    submitButton.removeEventListener('click', onSubmitButtonClick);
+    editForm.removeEventListener('submit', onEditFormSubmit);
     clearForm();
   };
 
@@ -86,7 +85,7 @@
   };
 
   var onHashtagsInputChange = function () {
-    window.validity.check();
+    window.validity.check(hashtagsInput);
   };
 
   var showSuccessMessage = function () {
@@ -97,7 +96,8 @@
   var showErrorMessage = function (message) {
     window.message.error(message);
   };
-  var onSubmitButtonClick = function (evt) {
+
+  var onEditFormSubmit = function (evt) {
     evt.preventDefault();
 
     window.backend.save(new FormData(editForm),

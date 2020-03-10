@@ -1,7 +1,7 @@
 'use strict';
 
 (function () {
-  var URL = {
+  var Url = {
     GET: 'https://js.dump.academy/kekstagram/data',
     POST: 'https://js.dump.academy/kekstagram'
   };
@@ -49,7 +49,7 @@
       onError('Время ожидания ответа от сервера истекло. Проверьте ваше интернет соединение.');
     });
 
-    xhr.open(method, URL[method]);
+    xhr.open(method, Url[method]);
   };
 
   var loadData = function (onLoad, onError) {
