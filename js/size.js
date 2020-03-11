@@ -6,12 +6,11 @@
   var MIN_SCALE_LEVEL = 25;
   var MAX_SCALE_LEVEL = 100;
 
-  var editImage = document.querySelector('.img-upload__overlay');
-  var scaleInput = editImage.querySelector('.scale__control--value');
-  var imageScale = editImage.querySelector('.img-upload__scale');
+  var scaleInput = window.utils.scaleInput;
+  var imageScale = window.utils.imageScale;
   var scaleControlSmaller = imageScale.querySelector('.scale__control--smaller');
   var scaleControlBigger = imageScale.querySelector('.scale__control--bigger');
-  var imagePreview = editImage.querySelector('.img-upload__preview');
+  var imagePreview = window.utils.imagePreview;
 
   var changeSize = function (evt) {
     var target = evt.target.closest('button');

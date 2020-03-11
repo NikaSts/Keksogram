@@ -4,18 +4,17 @@
 
 
   var body = document.querySelector('body');
-  var uploadForm = document.querySelector('.img-upload__form');
-  var editImage = uploadForm.querySelector('.img-upload__overlay');
-  var hashtagsInput = uploadForm.querySelector('.text__hashtags');
-  var imageScale = editImage.querySelector('.img-upload__scale');
-  var uploadFileInput = uploadForm.querySelector('#upload-file');
-  var cancelButton = uploadForm.querySelector('.img-upload__cancel');
-  var descriptionInput = uploadForm.querySelector('.text__description');
+  var editForm = window.utils.editForm;
+  var editImage = window.utils.editImage;
+  var hashtagsInput = editForm.querySelector('.text__hashtags');
+  var imageScale = window.utils.imageScale;
+  var uploadFileInput = editForm.querySelector('#upload-file');
+  var cancelButton = editForm.querySelector('.img-upload__cancel');
+  var descriptionInput = editForm.querySelector('.text__description');
   var effectsList = document.querySelector('.effects__list');
-  var line = uploadForm.querySelector('.effect-level__line');
-  var pin = line.querySelector('.effect-level__pin');
-  var scaleInput = editImage.querySelector('.scale__control--value');
-  var imagePreview = editImage.querySelector('.img-upload__preview');
+  var pin = window.utils.pin;
+  var scaleInput = window.utils.scaleInput;
+  var imagePreview = window.utils.imagePreview;
 
 
   uploadFileInput.addEventListener('change', function () {
@@ -32,11 +31,12 @@
     imagePreview.className = 'img-upload__preview';
 
     cancelButton.addEventListener('click', onCancelButtonClick);
-    document.addEventListener('keydown', onUploadFormEscPress);
+    document.addEventListener('keydown', onEditFormEscPress);
     pin.addEventListener('mousedown', onPinMouseDown);
     hashtagsInput.addEventListener('change', onHashtagsInputChange);
     imageScale.addEventListener('click', onScaleControlClick);
     effectsList.addEventListener('click', onEffectButtonClick);
+    editForm.addEventListener('submit', onEditFormSubmit);
   };
 
   var hideEditForm = function () {
@@ -44,11 +44,17 @@
     body.classList.remove('modal-open');
 
     cancelButton.removeEventListener('click', onCancelButtonClick);
-    document.removeEventListener('keydown', onUploadFormEscPress);
+    document.removeEventListener('keydown', onEditFormEscPress);
     pin.removeEventListener('mousedown', onPinMouseDown);
     hashtagsInput.removeEventListener('change', onHashtagsInputChange);
     imageScale.removeEventListener('click', onScaleControlClick);
     effectsList.removeEventListener('click', onEffectButtonClick);
+    editForm.removeEventListener('submit', onEditFormSubmit);
+    clearForm();
+  };
+
+  var clearForm = function () {
+    editForm.reset();
   };
 
   var setMaxScaleLevel = function () {
@@ -60,7 +66,7 @@
     hideEditForm();
   };
 
-  var onUploadFormEscPress = function (evt) {
+  var onEditFormEscPress = function (evt) {
     if ((evt.keyCode === window.utils.ESCAPE_KEY) && (evt.target !== hashtagsInput) && (evt.target !== descriptionInput)) {
       hideEditForm();
     }
@@ -79,7 +85,28 @@
   };
 
   var onHashtagsInputChange = function () {
-    window.validity.check();
+    window.validity.check(hashtagsInput);
+  };
+
+  var showSuccessMessage = function () {
+    window.message.success();
+    hideEditForm();
+  };
+
+  var showErrorMessage = function (message) {
+    window.message.error(message);
+  };
+
+  var onEditFormSubmit = function (evt) {
+    evt.preventDefault();
+
+    window.backend.save(new FormData(editForm),
+        function () {
+          showSuccessMessage();
+        },
+        function (message) {
+          showErrorMessage(message);
+        });
   };
 
 }());

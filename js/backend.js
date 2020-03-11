@@ -1,7 +1,7 @@
 'use strict';
 
 (function () {
-  var URL = {
+  var Url = {
     GET: 'https://js.dump.academy/kekstagram/data',
     POST: 'https://js.dump.academy/kekstagram'
   };
@@ -31,7 +31,7 @@
           onError('У вас нет прав для просмотра данной страницы, или просмотра страницы необходимо зарегистрироваться.');
           break;
         case Codes.NOT_FOUND_ERROR:
-          onError('Запрашиваемая страница не найдена. Проверьте правильность набора адреса страницы в адресной строке браузераю');
+          onError('Запрашиваемая страница не найдена. Проверьте правильность набора адреса страницы в адресной строке браузера.');
           break;
         case Codes.SERVER_ERROR:
           onError('Сервер не отвечает. Повторите попытку позже.');
@@ -49,7 +49,7 @@
       onError('Время ожидания ответа от сервера истекло. Проверьте ваше интернет соединение.');
     });
 
-    xhr.open(method, URL[method]);
+    xhr.open(method, Url[method]);
   };
 
   var loadData = function (onLoad, onError) {
@@ -58,8 +58,16 @@
     xhr.send();
   };
 
+  var sendData = function (data, onLoad, onError) {
+    var xhr = new XMLHttpRequest();
+    processServerResponce(xhr, 'POST', onLoad, onError);
+    xhr.send(data);
+  };
+
+
   window.backend = {
     load: loadData,
+    save: sendData
   };
 
 })();

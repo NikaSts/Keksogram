@@ -4,9 +4,9 @@
 
   var MAX_EFFECT_LEVEL = 100;
 
-  var editImage = document.querySelector('.img-upload__overlay');
-  var imagePreview = editImage.querySelector('.img-upload__preview');
-  var effectLevelInput = editImage.querySelector('.effect-level__value');
+  var editImage = window.utils.editImage;
+  var imagePreview = window.utils.imagePreview;
+  var effectLevelInput = window.utils.effectLevelInput;
   var effectListMap = {
     'effect-none': 'effects__preview--none',
     'effect-chrome': 'effects__preview--chrome',
@@ -15,6 +15,10 @@
     'effect-phobos': 'effects__preview--phobos',
     'effect-heat': 'effects__preview--heat'
   };
+  var bar = editImage.querySelector('.img-upload__effect-level');
+  var pin = window.utils.pin;
+  var effectDepth = window.utils.effectDepth;
+
 
   var changeFilter = function (evt) {
     var target = evt.target.matches('input[name="effect"]');
@@ -72,10 +76,6 @@
     }
   };
 
-  var bar = editImage.querySelector('.img-upload__effect-level');
-  var line = bar.querySelector('.effect-level__line');
-  var pin = line.querySelector('.effect-level__pin');
-  var effectDepth = line.querySelector('.effect-level__depth');
 
   var setDefaultEffectLevel = function () {
     pin.style.left = MAX_EFFECT_LEVEL + '%';
