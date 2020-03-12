@@ -1,11 +1,11 @@
 'use strict';
 
 (function () {
-  var Url = {
+  var TIMEOUT = 10000;
+  var Urls = {
     GET: 'https://js.dump.academy/kekstagram/data',
     POST: 'https://js.dump.academy/kekstagram'
   };
-  var TIMEOUT = 10000;
   var Codes = {
     SUCCESS: 200,
     BAD_REQUEST_ERROR: 400,
@@ -49,7 +49,7 @@
       onError('Время ожидания ответа от сервера истекло. Проверьте ваше интернет соединение.');
     });
 
-    xhr.open(method, Url[method]);
+    xhr.open(method, Urls[method]);
   };
 
   var loadData = function (onLoad, onError) {

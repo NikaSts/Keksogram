@@ -2,7 +2,6 @@
 
 (function () {
 
-
   var body = document.querySelector('body');
   var editForm = window.utils.editForm;
   var editImage = window.utils.editImage;
@@ -29,7 +28,17 @@
     window.filter.setDefaultEffectLevel();
     window.filter.showBar('effect-none');
     imagePreview.className = 'img-upload__preview';
+    addListeners();
+  };
 
+  var hideEditForm = function () {
+    editImage.classList.add('hidden');
+    body.classList.remove('modal-open');
+    removeListeners();
+    clearForm();
+  };
+
+  var addListeners = function () {
     cancelButton.addEventListener('click', onCancelButtonClick);
     document.addEventListener('keydown', onEditFormEscPress);
     pin.addEventListener('mousedown', onPinMouseDown);
@@ -39,10 +48,7 @@
     editForm.addEventListener('submit', onEditFormSubmit);
   };
 
-  var hideEditForm = function () {
-    editImage.classList.add('hidden');
-    body.classList.remove('modal-open');
-
+  var removeListeners = function () {
     cancelButton.removeEventListener('click', onCancelButtonClick);
     document.removeEventListener('keydown', onEditFormEscPress);
     pin.removeEventListener('mousedown', onPinMouseDown);
@@ -50,7 +56,6 @@
     imageScale.removeEventListener('click', onScaleControlClick);
     effectsList.removeEventListener('click', onEffectButtonClick);
     editForm.removeEventListener('submit', onEditFormSubmit);
-    clearForm();
   };
 
   var clearForm = function () {

@@ -38,28 +38,18 @@
   };
 
   var onSuccess = function () {
-    var templateMessage = document.querySelector('#success')
-    .content
-    .querySelector('.success');
-    var messageElement = templateMessage.cloneNode(true);
-
+    var messageElement = window.utils.createTemplate('success');
     setMessageStyle(messageElement);
     messageElement.querySelector('h2').textContent = 'Изображение успешно загружено';
     messageElement.querySelector('button').textContent = 'Круто!';
-
     renderMessageElement(messageElement, 'success');
   };
 
   var onError = function (message) {
-    var templateMessage = document.querySelector('#error')
-    .content
-    .querySelector('.error');
-    var messageElement = templateMessage.cloneNode(true);
-
+    var messageElement = window.utils.createTemplate('error');
     setMessageStyle(messageElement);
     messageElement.querySelector('h2').textContent = message;
     messageElement.querySelector('button').textContent = 'OK';
-
     renderMessageElement(messageElement, 'error');
   };
 
