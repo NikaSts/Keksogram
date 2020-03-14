@@ -4,7 +4,6 @@
 
   var bigPicture = document.querySelector('.big-picture');
 
-
   // функция создания одного элемента разметки
   var createCustomElement = function (tagName, className, text) {
     var element = document.createElement(tagName);
@@ -30,34 +29,23 @@
     return commentsElement;
   };
 
-  // создаем DOM-элементы и заполняем их
-  var createCommentsList = function (comments) {
-    var fragment = document.createDocumentFragment();
-
-    for (var i = 0; i < comments.length; i++) {
-      fragment.appendChild(createCommentsElement(comments[i]));
-    }
-    return fragment;
+  var createCommentsList = function (comments, commentsList) {
+    commentsList.innerHTML = '';
+    commentsList.appendChild(window.utils.createFragment(comments, createCommentsElement));
   };
 
-
-  // заполняем его информацией
   var renderBigPicture = function (photo) {
     var image = bigPicture.querySelector('.big-picture__img').querySelector('img');
-    image.src = photo.url;
-
     var description = bigPicture.querySelector('.social__caption');
-    description.textContent = photo.description;
-
     var likesCount = bigPicture.querySelector('.likes-count');
-    likesCount.textContent = photo.likes;
-
     var commentsCount = bigPicture.querySelector('.comments-count');
-    commentsCount.textContent = photo.comments.length;
-
     var commentsList = bigPicture.querySelector('.social__comments');
-    commentsList.innerHTML = '';
-    commentsList.appendChild(createCommentsList(photo.comments));
+
+    image.src = photo.url;
+    description.textContent = photo.description;
+    likesCount.textContent = photo.likes;
+    commentsCount.textContent = photo.comments.length;
+    createCommentsList(photo.comments, commentsList);
 
     bigPicture.querySelector('.social__comment-count').classList.add('hidden');
     bigPicture.querySelector('.comments-loader').classList.add('hidden');
