@@ -6,10 +6,8 @@
   filterMenu.classList.remove('img-filters--inactive');
 
   var showActiveFilter = function (target) {
-    var filterButtons = Array.from(filterMenu.querySelectorAll('button'));
-    filterButtons.forEach(function (item) {
-      item.classList.remove('img-filters__button--active');
-    });
+    var activeFilter = filterMenu.querySelector('.img-filters__button--active');
+    activeFilter.classList.remove('img-filters__button--active');
     target.classList.add('img-filters__button--active');
   };
 

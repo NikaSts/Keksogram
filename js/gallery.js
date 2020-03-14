@@ -24,16 +24,52 @@
   window.backend.load(
       function (photos) {
         createPicturesList(photos);
-
         var userPhotos = photos;
         window.gallery = {
           userPhotos: userPhotos
         };
+        filtredPhotos = userPhotos.slice();
       },
       function (errorMessage) {
         showErrorMessage(errorMessage);
       });
 
+
+  // фильтрация фотографий
+
+  var filtredPhotos = [];
+
+  var removePictureElements = function () {
+    picturesGallery.querySelectorAll('.picture').forEach(function (element) {
+      element.remove();
+    });
+  };
+
+  window.utils.filterMenu.addEventListener('mousedown', function (evt) {
+    window.debounce(filterUserPhotos(evt));
+  });
+
+  var filterUserPhotos = function (evt) {
+    var target = evt.target.closest('.img-filters__button');
+    if (!target) {
+      return;
+    }
+    window.sorting.showCurrent(target);
+    removePictureElements();
+
+    var userPhotos = window.gallery.userPhotos;
+
+    if (target.id === 'filter-default') {
+      filtredPhotos = userPhotos;
+    }
+    if (target.id === 'filter-discussed') {
+      filtredPhotos = window.sorting.getPopular(userPhotos);
+    }
+    if (target.id === 'filter-random') {
+      filtredPhotos = window.sorting.getRandom(userPhotos);
+    }
+    createPicturesList(filtredPhotos);
+  };
 
   // меняем превью фото по клику
   picturesGallery.addEventListener('click', function (evt) {
@@ -45,42 +81,8 @@
     if (!target) {
       return;
     }
-    var userPhotos = window.gallery.userPhotos;
     var index = target.dataset.index;
-    window.picture.show(userPhotos[index]);
+    window.picture.show(filtredPhotos[index]);
   };
 
-
-  // фильтрация фотографий
-  var removePictureElements = function () {
-    picturesGallery.querySelectorAll('.picture').forEach(function (element) {
-      element.remove();
-    });
-  };
-
-  window.utils.filterMenu.addEventListener('mousedown', function (evt) {
-    window.utils.debounce(filterUserPhotos(evt));
-  });
-
-  var filterUserPhotos = function (evt) {
-    var target = evt.target.closest('.img-filters__button');
-    if (!target) {
-      return;
-    }
-    window.sorting.showCurrent(target);
-    var userPhotos = window.gallery.userPhotos;
-
-    if (target.id === 'filter-default') {
-      removePictureElements();
-      createPicturesList(userPhotos);
-    }
-    if (target.id === 'filter-discussed') {
-      removePictureElements();
-      createPicturesList(window.sorting.getPopular(userPhotos));
-    }
-    if (target.id === 'filter-random') {
-      removePictureElements();
-      createPicturesList(window.sorting.getRandom(userPhotos));
-    }
-  };
 }());
