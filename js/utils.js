@@ -16,11 +16,11 @@
   var filterMenu = document.querySelector('.img-filters');
 
 
-  var createFragment = function (array, createElement) {
+  var createFragment = function (array, createPictureElement) {
     var fragment = document.createDocumentFragment();
-    for (var i = 0; i < array.length; i++) {
-      fragment.appendChild(createElement(array[i], i));
-    }
+    array.forEach(function (item, i) {
+      fragment.appendChild(createPictureElement(item, i));
+    });
     return fragment;
   };
 

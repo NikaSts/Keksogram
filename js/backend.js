@@ -39,6 +39,8 @@
         case Codes.SERVICE_UNAVAILABLE_ERROR:
           onError('Сервер перегружен. Повторите попытку позже.');
           break;
+        default:
+          onError('Произошла ошибка соединения. Повторите попытку позже.');
       }
     });
 
@@ -63,7 +65,6 @@
     processServerResponce(xhr, 'POST', onLoad, onError);
     xhr.send(data);
   };
-
 
   window.backend = {
     load: loadData,

@@ -58,7 +58,7 @@
     return ((effectLevelInput.value * (limit.max - limit.min)) / MAX_EFFECT_LEVEL) + limit.min;
   };
 
-  var applyFilter = function (effect) {
+  var setFilter = function (effect) {
     if (effect === 'effect-chrome') {
       imagePreview.style.filter = 'grayscale(' + getEffectDepth(chrome) + ')';
     }
@@ -89,7 +89,7 @@
 
   window.filter = {
     change: changeFilter,
-    apply: applyFilter,
+    set: setFilter,
     showBar: showBar,
     setDefaultEffectLevel: setDefaultEffectLevel
   };

@@ -4,14 +4,19 @@
 
   var DEBOUNCE_INTERVAL = 500;
 
-  window.debounce = function (cb) {
+  window.debounce = function (callback) {
     var lastTimeout = null;
 
     return function () {
+      var parameters = arguments;
+
       if (lastTimeout) {
-        clearTimeout(lastTimeout);
+        window.clearTimeout(lastTimeout);
       }
-      lastTimeout = setTimeout(cb, DEBOUNCE_INTERVAL);
+
+      lastTimeout = window.setTimeout(function () {
+        callback.apply(null, parameters);
+      }, DEBOUNCE_INTERVAL);
     };
   };
 

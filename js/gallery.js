@@ -13,7 +13,7 @@
     return pictureElement;
   };
 
-  var createPicturesList = function (photos) {
+  var appendPictureElements = function (photos) {
     picturesGallery.appendChild(window.utils.createFragment(photos, createPictureElement));
   };
 
@@ -23,7 +23,7 @@
 
   window.backend.load(
       function (photos) {
-        createPicturesList(photos);
+        appendPictureElements(photos);
         var userPhotos = photos;
         window.gallery = {
           userPhotos: userPhotos
@@ -39,24 +39,20 @@
 
   var filtredPhotos = [];
 
-  var removePictureElements = function () {
-    picturesGallery.querySelectorAll('.picture').forEach(function (element) {
-      element.remove();
-    });
+
+  var onFilterMenuClick = function (evt) {
+    var target = evt.target.closest('.img-filters__button');
+    window.sorting.showCurrent(evt.target);
+
+    getFiltredPhotos(target);
+    removePictureElements();
+    renderPictureElements();
   };
 
-  window.utils.filterMenu.addEventListener('mousedown', function (evt) {
-    window.debounce(filterUserPhotos(evt));
-  });
-
-  var filterUserPhotos = function (evt) {
-    var target = evt.target.closest('.img-filters__button');
+  var getFiltredPhotos = function (target) {
     if (!target) {
       return;
     }
-    window.sorting.showCurrent(target);
-    removePictureElements();
-
     var userPhotos = window.gallery.userPhotos;
 
     if (target.id === 'filter-default') {
@@ -68,8 +64,19 @@
     if (target.id === 'filter-random') {
       filtredPhotos = window.sorting.getRandom(userPhotos);
     }
-    createPicturesList(filtredPhotos);
   };
+
+  var removePictureElements = function () {
+    picturesGallery.querySelectorAll('.picture').forEach(function (element) {
+      element.remove();
+    });
+  };
+
+  var renderPictureElements = window.debounce(function () {
+    appendPictureElements(filtredPhotos);
+  });
+
+  window.utils.filterMenu.addEventListener('click', onFilterMenuClick);
 
   // меняем превью фото по клику
   picturesGallery.addEventListener('click', function (evt) {
