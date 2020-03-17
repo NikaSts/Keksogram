@@ -2,11 +2,8 @@
 
 (function () {
 
-  var filterMenu = window.utils.filterMenu;
-  filterMenu.classList.remove('img-filters--inactive');
-
   var showActiveFilter = function (target) {
-    var activeFilter = filterMenu.querySelector('.img-filters__button--active');
+    var activeFilter = document.querySelector('.img-filters__button--active');
     activeFilter.classList.remove('img-filters__button--active');
     target.classList.add('img-filters__button--active');
   };
