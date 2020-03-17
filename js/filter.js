@@ -7,6 +7,10 @@
   var editImage = window.utils.editImage;
   var imagePreview = window.utils.imagePreview;
   var effectLevelInput = window.utils.effectLevelInput;
+  var bar = editImage.querySelector('.img-upload__effect-level');
+  var pin = window.utils.pin;
+  var effectDepth = window.utils.effectDepth;
+
   var effectListMap = {
     'effect-none': 'effects__preview--none',
     'effect-chrome': 'effects__preview--chrome',
@@ -14,23 +18,6 @@
     'effect-marvin': 'effects__preview--marvin',
     'effect-phobos': 'effects__preview--phobos',
     'effect-heat': 'effects__preview--heat'
-  };
-  var bar = editImage.querySelector('.img-upload__effect-level');
-  var pin = window.utils.pin;
-  var effectDepth = window.utils.effectDepth;
-
-
-  var changeFilter = function (evt) {
-    var target = evt.target.matches('input[name="effect"]');
-    if (!target) {
-      return;
-    }
-    var effectName = evt.target.id;
-    imagePreview.className = 'img-upload__preview';
-    imagePreview.classList.add(effectListMap[effectName]);
-    imagePreview.style.filter = '';
-    setDefaultEffectLevel();
-    showBar(effectName);
   };
 
   var chrome = {
@@ -52,6 +39,18 @@
   var heat = {
     min: 1,
     max: 3
+  };
+
+  var changeFilter = function (evt) {
+    var target = evt.target.matches('input[name="effect"]');
+    if (!target) {
+      return;
+    }
+    clearFilter();
+    var effectName = evt.target.id;
+    imagePreview.classList.add(effectListMap[effectName]);
+    setDefaultEffectLevel();
+    showBar(effectName);
   };
 
   var getEffectDepth = function (limit) {
@@ -76,6 +75,14 @@
     }
   };
 
+  var clearFilter = function () {
+    imagePreview.style.filter = '';
+    imagePreview.className = 'img-upload__preview';
+  };
+
+  var showBar = function (effect) {
+    return (effect === 'effect-none') ? bar.classList.add('hidden') : bar.classList.remove('hidden');
+  };
 
   var setDefaultEffectLevel = function () {
     pin.style.left = MAX_EFFECT_LEVEL + '%';
@@ -83,13 +90,10 @@
     effectLevelInput.value = MAX_EFFECT_LEVEL;
   };
 
-  var showBar = function (effect) {
-    return (effect === 'effect-none') ? bar.classList.add('hidden') : bar.classList.remove('hidden');
-  };
-
   window.filter = {
     change: changeFilter,
     set: setFilter,
+    clear: clearFilter,
     showBar: showBar,
     setDefaultEffectLevel: setDefaultEffectLevel
   };

@@ -6,7 +6,6 @@
   var MAX_HASHTAG_LENGTH = 20;
   var MIN_HASHTAG_LENGTH = 2;
 
-
   var createHashtags = function (input) {
     var hashtags = input.value.trim().toLowerCase().split(' ');
     return hashtags;
