@@ -109,8 +109,6 @@
 
   window.picture = {
     show: showBigPicture,
-    hide: hideBigPicture
   };
-
 
 }());

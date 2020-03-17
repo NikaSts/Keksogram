@@ -12,7 +12,6 @@
 
     var setPreviews = function () {
       photo.src = reader.result;
-      // input.name = file.name;
 
       previews.forEach(function (item) {
         item.style.backgroundImage = 'url("' + reader.result + '")';
