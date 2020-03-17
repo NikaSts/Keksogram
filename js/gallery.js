@@ -46,10 +46,8 @@
     if (!target) {
       return;
     }
-    window.sorting.showCurrent(evt.target);
-
-    getFiltredPhotos(target);
-    renderPictureElements();
+    window.sorting.showCurrent(target);
+    renderPictureElements(target);
   };
 
   var getFiltredPhotos = function (target) {
@@ -75,7 +73,8 @@
     });
   };
 
-  var renderPictureElements = window.debounce(function () {
+  var renderPictureElements = window.debounce(function (target) {
+    getFiltredPhotos(target);
     removePictureElements();
     appendPictureElements(filtredPhotos);
   });

@@ -15,7 +15,6 @@
   var scaleInput = window.utils.scaleInput;
   var imagePreview = window.utils.imagePreview;
 
-
   uploadFileInput.addEventListener('change', function () {
     openEditForm();
   });
@@ -35,7 +34,6 @@
     editImage.classList.add('hidden');
     body.classList.remove('modal-open');
     removeListeners();
-    clearForm();
   };
 
   var addListeners = function () {
@@ -108,6 +106,7 @@
     window.backend.save(new FormData(editForm),
         function () {
           showSuccessMessage();
+          clearForm();
         },
         function (message) {
           showErrorMessage(message);

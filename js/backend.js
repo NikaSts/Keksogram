@@ -2,11 +2,11 @@
 
 (function () {
   var TIMEOUT = 10000;
-  var Urls = {
+  var Url = {
     GET: 'https://js.dump.academy/kekstagram/data',
     POST: 'https://js.dump.academy/kekstagram'
   };
-  var Codes = {
+  var Code = {
     SUCCESS: 200,
     BAD_REQUEST_ERROR: 400,
     FORBIDDEN_ERROR: 403,
@@ -21,22 +21,22 @@
 
     xhr.addEventListener('load', function () {
       switch (xhr.status) {
-        case Codes.SUCCESS:
+        case Code.SUCCESS:
           onLoad(xhr.response);
           break;
-        case Codes.BAD_REQUEST_ERROR:
+        case Code.BAD_REQUEST_ERROR:
           onError('Сервер не смог обработать ваш запрос. Попробуйте открыть сайт другим браузером.');
           break;
-        case Codes.FORBIDDEN_ERROR:
+        case Code.FORBIDDEN_ERROR:
           onError('У вас нет прав для просмотра данной страницы, или просмотра страницы необходимо зарегистрироваться.');
           break;
-        case Codes.NOT_FOUND_ERROR:
+        case Code.NOT_FOUND_ERROR:
           onError('Запрашиваемая страница не найдена. Проверьте правильность набора адреса страницы в адресной строке браузера.');
           break;
-        case Codes.SERVER_ERROR:
+        case Code.SERVER_ERROR:
           onError('Сервер не отвечает. Повторите попытку позже.');
           break;
-        case Codes.SERVICE_UNAVAILABLE_ERROR:
+        case Code.SERVICE_UNAVAILABLE_ERROR:
           onError('Сервер перегружен. Повторите попытку позже.');
           break;
         default:
@@ -51,7 +51,7 @@
       onError('Время ожидания ответа от сервера истекло. Проверьте ваше интернет соединение.');
     });
 
-    xhr.open(method, Urls[method]);
+    xhr.open(method, Url[method]);
   };
 
   var loadData = function (onLoad, onError) {
