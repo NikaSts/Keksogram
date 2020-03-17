@@ -13,8 +13,6 @@
   var pin = line.querySelector('.effect-level__pin');
   var effectLevelInput = editImage.querySelector('.effect-level__value');
   var effectDepth = line.querySelector('.effect-level__depth');
-  var filterMenu = document.querySelector('.img-filters');
-
 
   var createFragment = function (array, createPictureElement) {
     var fragment = document.createDocumentFragment();
@@ -44,7 +42,6 @@
     effectDepth: effectDepth,
     createFragment: createFragment,
     createTemplate: createTemplate,
-    filterMenu: filterMenu,
   };
 
 }());

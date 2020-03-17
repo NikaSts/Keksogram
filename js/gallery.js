@@ -3,6 +3,7 @@
 (function () {
 
   var picturesGallery = document.querySelector('.pictures');
+  var filterMenu = document.querySelector('.img-filters');
 
   var createPictureElement = function (photo, index) {
     var pictureElement = window.utils.createTemplate('picture');
@@ -24,6 +25,7 @@
   window.backend.load(
       function (photos) {
         appendPictureElements(photos);
+        filterMenu.classList.remove('img-filters--inactive');
         var userPhotos = photos;
         window.gallery = {
           userPhotos: userPhotos
@@ -39,13 +41,14 @@
 
   var filtredPhotos = [];
 
-
   var onFilterMenuClick = function (evt) {
     var target = evt.target.closest('.img-filters__button');
+    if (!target) {
+      return;
+    }
     window.sorting.showCurrent(evt.target);
 
     getFiltredPhotos(target);
-    removePictureElements();
     renderPictureElements();
   };
 
@@ -73,10 +76,11 @@
   };
 
   var renderPictureElements = window.debounce(function () {
+    removePictureElements();
     appendPictureElements(filtredPhotos);
   });
 
-  window.utils.filterMenu.addEventListener('click', onFilterMenuClick);
+  filterMenu.addEventListener('click', onFilterMenuClick);
 
   // меняем превью фото по клику
   picturesGallery.addEventListener('click', function (evt) {
