@@ -14,8 +14,12 @@
   var pin = window.utils.pin;
   var scaleInput = window.utils.scaleInput;
   var imagePreview = window.utils.imagePreview;
+  var bigPreview = document.querySelector('.img-upload__preview img');
+  var smallPreviews = document.querySelectorAll('.effects__preview');
+
 
   uploadFileInput.addEventListener('change', function () {
+    window.photo.upload(uploadFileInput, bigPreview, smallPreviews);
     openEditForm();
   });
 
@@ -34,6 +38,7 @@
     editImage.classList.add('hidden');
     body.classList.remove('modal-open');
     removeListeners();
+    window.filter.clear();
   };
 
   var addListeners = function () {
@@ -93,7 +98,6 @@
 
   var showSuccessMessage = function () {
     window.message.success();
-    hideEditForm();
   };
 
   var showErrorMessage = function (message) {
@@ -106,6 +110,7 @@
     window.backend.save(new FormData(editForm),
         function () {
           showSuccessMessage();
+          hideEditForm();
           clearForm();
         },
         function (message) {
