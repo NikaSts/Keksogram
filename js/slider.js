@@ -34,7 +34,7 @@
       effectDepth.style.width = effectInPercent + '%';
 
       var activeEffect = document.querySelector('input[name="effect"]:checked').id;
-      window.filter.apply(activeEffect);
+      window.filter.set(activeEffect);
     };
 
     var onPinMouseUp = function (upEvt) {

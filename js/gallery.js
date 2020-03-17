@@ -3,6 +3,7 @@
 (function () {
 
   var picturesGallery = document.querySelector('.pictures');
+  var filterMenu = document.querySelector('.img-filters');
 
   var createPictureElement = function (photo, index) {
     var pictureElement = window.utils.createTemplate('picture');
@@ -13,7 +14,7 @@
     return pictureElement;
   };
 
-  var createPicturesList = function (photos) {
+  var appendPictureElements = function (photos) {
     picturesGallery.appendChild(window.utils.createFragment(photos, createPictureElement));
   };
 
@@ -23,17 +24,62 @@
 
   window.backend.load(
       function (photos) {
-        createPicturesList(photos);
-
+        appendPictureElements(photos);
+        filterMenu.classList.remove('img-filters--inactive');
         var userPhotos = photos;
         window.gallery = {
           userPhotos: userPhotos
         };
+        filtredPhotos = userPhotos.slice();
       },
       function (errorMessage) {
         showErrorMessage(errorMessage);
       });
 
+
+  // фильтрация фотографий
+
+  var filtredPhotos = [];
+
+  var onFilterMenuClick = function (evt) {
+    var target = evt.target.closest('.img-filters__button');
+    if (!target) {
+      return;
+    }
+    window.sorting.showCurrent(target);
+    renderPictureElements(target);
+  };
+
+  var getFiltredPhotos = function (target) {
+    if (!target) {
+      return;
+    }
+    var userPhotos = window.gallery.userPhotos;
+
+    if (target.id === 'filter-default') {
+      filtredPhotos = userPhotos;
+    }
+    if (target.id === 'filter-discussed') {
+      filtredPhotos = window.sorting.getPopular(userPhotos);
+    }
+    if (target.id === 'filter-random') {
+      filtredPhotos = window.sorting.getRandom(userPhotos);
+    }
+  };
+
+  var removePictureElements = function () {
+    picturesGallery.querySelectorAll('.picture').forEach(function (element) {
+      element.remove();
+    });
+  };
+
+  var renderPictureElements = window.debounce(function (target) {
+    getFiltredPhotos(target);
+    removePictureElements();
+    appendPictureElements(filtredPhotos);
+  });
+
+  filterMenu.addEventListener('click', onFilterMenuClick);
 
   // меняем превью фото по клику
   picturesGallery.addEventListener('click', function (evt) {
@@ -45,42 +91,8 @@
     if (!target) {
       return;
     }
-    var userPhotos = window.gallery.userPhotos;
     var index = target.dataset.index;
-    window.picture.show(userPhotos[index]);
+    window.picture.show(filtredPhotos[index]);
   };
 
-
-  // фильтрация фотографий
-  var removePictureElements = function () {
-    picturesGallery.querySelectorAll('.picture').forEach(function (element) {
-      element.remove();
-    });
-  };
-
-  window.utils.filterMenu.addEventListener('mousedown', function (evt) {
-    window.utils.debounce(filterUserPhotos(evt));
-  });
-
-  var filterUserPhotos = function (evt) {
-    var target = evt.target.closest('.img-filters__button');
-    if (!target) {
-      return;
-    }
-    window.sorting.showCurrent(target);
-    var userPhotos = window.gallery.userPhotos;
-
-    if (target.id === 'filter-default') {
-      removePictureElements();
-      createPicturesList(userPhotos);
-    }
-    if (target.id === 'filter-discussed') {
-      removePictureElements();
-      createPicturesList(window.sorting.getPopular(userPhotos));
-    }
-    if (target.id === 'filter-random') {
-      removePictureElements();
-      createPicturesList(window.sorting.getRandom(userPhotos));
-    }
-  };
 }());
