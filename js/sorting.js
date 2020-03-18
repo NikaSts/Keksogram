@@ -8,32 +8,33 @@
     target.classList.add('img-filters__button--active');
   };
 
-  var getPopularPhotos = function (photos) {
-    return photos.slice().sort(function (a, b) {
+  var getPopularPictures = function (pictures) {
+    return pictures.slice().sort(function (a, b) {
       return b.comments.length - a.comments.length;
     });
   };
 
-  var shufflePhotos = function (photos) {
+  var shufflePictures = function (pictures) {
     var randomIndex;
     var swap;
-    for (var i = photos.length - 1; i > 0; i--) {
+    var picturesLength = pictures.length;
+    for (var i = picturesLength - 1; i > 0; i--) {
       randomIndex = Math.floor(Math.random() * (i + 1));
-      swap = photos[randomIndex];
-      photos[randomIndex] = photos[i];
-      photos[i] = swap;
+      swap = pictures[randomIndex];
+      pictures[randomIndex] = pictures[i];
+      pictures[i] = swap;
     }
-    return photos;
+    return pictures;
   };
 
-  var getRandomPhotos = function (photos) {
-    return shufflePhotos(photos.slice()).splice(0, 10);
+  var getRandomPictures = function (pictures) {
+    return shufflePictures(pictures.slice()).splice(0, 10);
   };
 
   window.sorting = {
     showCurrent: showActiveFilter,
-    getPopular: getPopularPhotos,
-    getRandom: getRandomPhotos
+    getPopular: getPopularPictures,
+    getRandom: getRandomPictures
   };
 
 })();

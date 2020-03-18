@@ -5,6 +5,8 @@
   var MAX_HASHTAGS_NUMBER = 5;
   var MAX_HASHTAG_LENGTH = 20;
   var MIN_HASHTAG_LENGTH = 2;
+  var ERROR_BORDER_STYLE = '2px solid #ff4d4d';
+  var REGEXP = /^([A-Za-zА-ЯЁа-яё0-9]*)$/;
 
   var createHashtags = function (input) {
     var hashtags = input.value.trim().toLowerCase().split(' ');
@@ -16,37 +18,47 @@
       return hashtag !== '';
     });
     if (hashtags.length > 0) {
-      setCustomValidityMessage(hashtags, input);
+      setCustomValidation(hashtags, input);
     }
   };
 
-  var setCustomValidityMessage = function (hashtags, input) {
+  var setCustomValidation = function (hashtags, input) {
     if (hashtags.length > MAX_HASHTAGS_NUMBER) {
       input.setCustomValidity('нельзя указать больше пяти хэш-тегов');
       return;
     }
-    for (var i = 0; i < hashtags.length; i++) {
+    var hashtagsLength = hashtags.length;
+    for (var i = 0; i < hashtagsLength; i++) {
       var hashtag = hashtags[i];
 
       if (hashtag[0] !== '#') {
         input.setCustomValidity('хэш-тег должен начинаться с символа # (решётка)');
+        setErrorBorderStyle(input);
         break;
       } else if (hashtag.length < MIN_HASHTAG_LENGTH) {
         input.setCustomValidity('хеш-тег не может состоять только из одной решётки');
+        setErrorBorderStyle(input);
         break;
       } else if (hashtag.length > MAX_HASHTAG_LENGTH) {
         input.setCustomValidity('максимальная длина одного хэш-тега 20 символов, включая решётку');
+        setErrorBorderStyle(input);
         break;
-      } else if (!hashtag.substring(1).match(/^([A-Za-zА-ЯЁа-яё0-9]*)$/)) {
+      } else if (!hashtag.substring(1).match(REGEXP)) {
         input.setCustomValidity('название хэш-тега должно состоять только из букв и цифр');
+        setErrorBorderStyle(input);
         break;
       } else if (hashtags.indexOf(hashtag, i + 1) !== -1) {
         input.setCustomValidity('один и тот же хэш-тег не может быть использован дважды');
+        setErrorBorderStyle(input);
         break;
       } else {
         input.setCustomValidity('');
       }
     }
+  };
+
+  var setErrorBorderStyle = function (input) {
+    input.style.border = ERROR_BORDER_STYLE;
   };
 
   window.validity = {
