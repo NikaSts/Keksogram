@@ -3,7 +3,7 @@
 (function () {
   var FILE_TYPES = ['gif', 'jpg', 'jpeg', 'png'];
 
-  var uploadPhoto = function (input, photo, previews, evt) {
+  var uploadPicture = function (input, picture, previews, evt) {
     var file = input.files[0];
     var fileName = file.name.toLowerCase();
     var matches = FILE_TYPES.some(function (it) {
@@ -11,7 +11,7 @@
     });
 
     var setPreviews = function () {
-      photo.src = reader.result;
+      picture.src = reader.result;
 
       previews.forEach(function (item) {
         item.style.backgroundImage = 'url("' + reader.result + '")';
@@ -29,8 +29,8 @@
     }
   };
 
-  window.photo = {
-    upload: uploadPhoto
+  window.newPicture = {
+    upload: uploadPicture
   };
 
 }());

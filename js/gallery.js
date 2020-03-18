@@ -5,17 +5,17 @@
   var picturesGallery = document.querySelector('.pictures');
   var filterMenu = document.querySelector('.img-filters');
 
-  var createPictureElement = function (photo, index) {
+  var createPictureElement = function (picture, index) {
     var pictureElement = window.utils.createTemplate('picture');
     pictureElement.dataset.index = index;
-    pictureElement.querySelector('.picture__img').src = photo.url;
-    pictureElement.querySelector('.picture__likes').textContent = photo.likes;
-    pictureElement.querySelector('.picture__comments').textContent = photo.comments.length;
+    pictureElement.querySelector('.picture__img').src = picture.url;
+    pictureElement.querySelector('.picture__likes').textContent = picture.likes;
+    pictureElement.querySelector('.picture__comments').textContent = picture.comments.length;
     return pictureElement;
   };
 
-  var appendPictureElements = function (photos) {
-    picturesGallery.appendChild(window.utils.createFragment(photos, createPictureElement));
+  var appendPictureElements = function (pictures) {
+    picturesGallery.appendChild(window.utils.createFragment(pictures, createPictureElement));
   };
 
   var showErrorMessage = function (errorMessage) {
@@ -23,23 +23,21 @@
   };
 
   window.backend.load(
-      function (photos) {
-        appendPictureElements(photos);
+      function (pictures) {
+        appendPictureElements(pictures);
         filterMenu.classList.remove('img-filters--inactive');
-        var userPhotos = photos;
+        var userPictures = pictures;
         window.gallery = {
-          userPhotos: userPhotos
+          userPictures: userPictures
         };
-        filtredPhotos = userPhotos.slice();
+        filtredPictures = userPictures.slice();
       },
       function (errorMessage) {
         showErrorMessage(errorMessage);
       });
 
 
-  // фильтрация фотографий
-
-  var filtredPhotos = [];
+  var filtredPictures = [];
 
   var onFilterMenuClick = function (evt) {
     var target = evt.target.closest('.img-filters__button');
@@ -50,21 +48,15 @@
     renderPictureElements(target);
   };
 
-  var getFiltredPhotos = function (target) {
-    if (!target) {
-      return;
-    }
-    var userPhotos = window.gallery.userPhotos;
-
-    if (target.id === 'filter-default') {
-      filtredPhotos = userPhotos;
-    }
-    if (target.id === 'filter-discussed') {
-      filtredPhotos = window.sorting.getPopular(userPhotos);
-    }
-    if (target.id === 'filter-random') {
-      filtredPhotos = window.sorting.getRandom(userPhotos);
-    }
+  var getFiltredPictures = function (target) {
+    var className = target.id;
+    var userPictures = window.gallery.userPictures;
+    var classNameToFiltredPictures = {
+      'filter-default': userPictures,
+      'filter-discussed': window.sorting.getPopular(userPictures),
+      'filter-random': window.sorting.getRandom(userPictures)
+    };
+    filtredPictures = classNameToFiltredPictures[className];
   };
 
   var removePictureElements = function () {
@@ -74,25 +66,23 @@
   };
 
   var renderPictureElements = window.debounce(function (target) {
-    getFiltredPhotos(target);
+    getFiltredPictures(target);
     removePictureElements();
-    appendPictureElements(filtredPhotos);
+    appendPictureElements(filtredPictures);
   });
 
-  filterMenu.addEventListener('click', onFilterMenuClick);
 
-  // меняем превью фото по клику
-  picturesGallery.addEventListener('click', function (evt) {
-    renderTargetPhoto(evt);
-  });
-
-  var renderTargetPhoto = function (evt) {
+  var showTargetPicture = function (evt) {
     var target = evt.target.closest('.picture');
     if (!target) {
       return;
     }
     var index = target.dataset.index;
-    window.picture.show(filtredPhotos[index]);
+    window.picture.show(filtredPictures[index]);
   };
 
+  filterMenu.addEventListener('click', onFilterMenuClick);
+  picturesGallery.addEventListener('click', function (evt) {
+    showTargetPicture(evt);
+  });
 }());

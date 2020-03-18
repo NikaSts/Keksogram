@@ -2,14 +2,17 @@
 
 (function () {
 
+  var START_COMMENTS_NUMBER = 5;
+
   var bigPicture = document.querySelector('.big-picture');
   var commentsList = bigPicture.querySelector('.social__comments');
   var commentsLoader = bigPicture.querySelector('.comments-loader');
   var commentsCount = bigPicture.querySelector('.comments-count');
   var commentsOpen = bigPicture.querySelector('.comments-open');
+  var body = document.querySelector('body');
+  var closeButton = bigPicture.querySelector('#picture-cancel');
 
 
-  // функция создания одного элемента разметки
   var createCustomElement = function (tagName, className, text) {
     var element = document.createElement(tagName);
     element.classList.add(className);
@@ -19,7 +22,6 @@
     return element;
   };
 
-  // создаем один комментарий
   var createCommentElement = function (comment) {
     var commentsElement = createCustomElement('li', 'social__comment');
 
@@ -37,44 +39,45 @@
   var createCommentsList = function (commentsTotal) {
     var commentsToShow = commentsTotal.splice(0, 5);
     commentsList.appendChild(window.utils.createFragment(commentsToShow, createCommentElement));
-    updateCommentsCounter();
+  };
+
+
+  var userComments = [];
+
+  var renderBigPictureElement = function (picture) {
+    var image = bigPicture.querySelector('.big-picture__img').querySelector('img');
+    var description = bigPicture.querySelector('.social__caption');
+    var likesCount = bigPicture.querySelector('.likes-count');
+
+    image.src = picture.url;
+    description.textContent = picture.description;
+    likesCount.textContent = picture.likes;
+
+    commentsCount.textContent = picture.comments.length;
+    commentsList.innerHTML = '';
+    userComments = picture.comments.slice();
+
+    createCommentsList(userComments);
+    commentsOpen.textContent = commentsList.childElementCount;
+
+    if (picture.comments.length > START_COMMENTS_NUMBER) {
+      commentsLoader.addEventListener('click', onCommentsLoaderClick);
+      commentsLoader.classList.remove('hidden');
+    }
   };
 
   var updateCommentsCounter = function () {
     commentsOpen.textContent = commentsList.childElementCount;
     if (commentsCount.textContent === commentsOpen.textContent) {
       commentsLoader.classList.add('hidden');
+      commentsLoader.removeEventListener('click', onCommentsLoaderClick);
     }
   };
 
-  var renderBigPicture = function (photo) {
-    var image = bigPicture.querySelector('.big-picture__img').querySelector('img');
-    var description = bigPicture.querySelector('.social__caption');
-    var likesCount = bigPicture.querySelector('.likes-count');
-
-    image.src = photo.url;
-    description.textContent = photo.description;
-    likesCount.textContent = photo.likes;
-
-    commentsCount.textContent = photo.comments.length;
-    commentsList.innerHTML = '';
-    var userComments = photo.comments.slice();
-
+  var onCommentsLoaderClick = function () {
     createCommentsList(userComments);
-
-    var onCommentsLoaderClick = function () {
-      createCommentsList(userComments);
-      if (commentsCount.textContent === commentsOpen.textContent) {
-        commentsLoader.removeEventListener('click', onCommentsLoaderClick);
-      }
-    };
-
-    commentsLoader.addEventListener('click', onCommentsLoaderClick);
+    updateCommentsCounter();
   };
-
-  // отображаем большую картинку
-  var body = document.querySelector('body');
-  var closeButton = bigPicture.querySelector('#picture-cancel');
 
   var onCloseButtonClick = function () {
     hideBigPicture();
@@ -86,8 +89,8 @@
     }
   };
 
-  var showBigPicture = function (photo) {
-    renderBigPicture(photo);
+  var showBigPicture = function (picture) {
+    renderBigPictureElement(picture);
     body.classList.add('modal-open');
     bigPicture.classList.remove('hidden');
 
@@ -98,13 +101,13 @@
   var hideBigPicture = function () {
     body.classList.remove('modal-open');
     bigPicture.classList.add('hidden');
-    commentsLoader.classList.remove('hidden');
     commentsList.querySelectorAll('li').forEach(function (element) {
       element.remove();
     });
 
     document.removeEventListener('keydown', onBigPictureEscPress);
     closeButton.removeEventListener('click', onCloseButtonClick);
+    commentsLoader.removeEventListener('click', onCommentsLoaderClick);
   };
 
   window.picture = {

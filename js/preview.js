@@ -19,7 +19,7 @@
 
 
   uploadFileInput.addEventListener('change', function () {
-    window.photo.upload(uploadFileInput, bigPreview, smallPreviews);
+    window.newPicture.upload(uploadFileInput, bigPreview, smallPreviews);
     openEditForm();
   });
 

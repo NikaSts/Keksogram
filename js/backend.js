@@ -15,7 +15,10 @@
     SERVICE_UNAVAILABLE_ERROR: 503
   };
 
-  var processServerResponce = function (xhr, method, onLoad, onError) {
+  var xhr;
+
+  var processServerResponce = function (method, onLoad, onError) {
+    xhr = new XMLHttpRequest();
     xhr.responseType = 'json';
     xhr.timeout = TIMEOUT;
 
@@ -55,14 +58,12 @@
   };
 
   var loadData = function (onLoad, onError) {
-    var xhr = new XMLHttpRequest();
-    processServerResponce(xhr, 'GET', onLoad, onError);
+    processServerResponce('GET', onLoad, onError);
     xhr.send();
   };
 
   var sendData = function (data, onLoad, onError) {
-    var xhr = new XMLHttpRequest();
-    processServerResponce(xhr, 'POST', onLoad, onError);
+    processServerResponce('POST', onLoad, onError);
     xhr.send(data);
   };
 
