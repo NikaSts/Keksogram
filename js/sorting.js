@@ -2,6 +2,8 @@
 
 (function () {
 
+  var MAX_PICTURES_NUMBER = 10;
+
   var showActiveFilter = function (target) {
     var activeFilter = document.querySelector('.img-filters__button--active');
     activeFilter.classList.remove('img-filters__button--active');
@@ -28,7 +30,7 @@
   };
 
   var getRandomPictures = function (pictures) {
-    return shufflePictures(pictures.slice()).splice(0, 10);
+    return shufflePictures(pictures.slice()).splice(0, MAX_PICTURES_NUMBER);
   };
 
   window.sorting = {

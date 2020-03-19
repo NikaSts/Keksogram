@@ -7,28 +7,44 @@
   var LINE_HEIGHT = '32px';
 
   var main = document.querySelector('main');
+  var button;
+  var popup;
+  var state;
 
-  var renderMessageElement = function (message, state) {
+  var renderMessageElement = function (message) {
     main.appendChild(message);
 
-    var button = main.querySelector('.' + state + '__button');
-    var popup = main.querySelector('.' + state);
+    button = main.querySelector('.' + state + '__button');
+    popup = main.querySelector('.' + state);
     popup.style.zIndex = Z_INDEX;
 
-    button.addEventListener('click', function () {
-      popup.remove();
-    });
-    document.addEventListener('keydown', function (evt) {
-      if (evt.keyCode === window.utils.ESCAPE_KEY) {
-        popup.remove();
-      }
-    });
-    document.addEventListener('mouseup', function (evt) {
-      var target = evt.target.closest('.' + state + '__inner');
-      if (!target) {
-        popup.remove();
-      }
-    });
+    button.addEventListener('click', onButtonClick);
+    document.addEventListener('keydown', onDocumentEscPress);
+    document.addEventListener('mouseup', onDocumentMouseUp);
+  };
+
+  var onButtonClick = function () {
+    popupClose();
+  };
+
+  var onDocumentEscPress = function (evt) {
+    if (evt.keyCode === window.utils.ESCAPE_KEY) {
+      popupClose();
+    }
+  };
+
+  var onDocumentMouseUp = function (evt) {
+    var target = evt.target.closest('.' + state + '__inner');
+    if (!target) {
+      popupClose();
+    }
+  };
+
+  var popupClose = function () {
+    popup.remove();
+    button.removeEventListener('click', onButtonClick);
+    document.removeEventListener('keydown', onDocumentEscPress);
+    document.removeEventListener('mouseup', onDocumentMouseUp);
   };
 
   var setMessageStyle = function (messageElement) {
@@ -42,7 +58,8 @@
     setMessageStyle(messageElement);
     messageElement.querySelector('h2').textContent = 'Изображение успешно загружено';
     messageElement.querySelector('button').textContent = 'Круто!';
-    renderMessageElement(messageElement, 'success');
+    state = 'success';
+    renderMessageElement(messageElement);
   };
 
   var onError = function (message) {
@@ -50,7 +67,8 @@
     setMessageStyle(messageElement);
     messageElement.querySelector('h2').textContent = message;
     messageElement.querySelector('button').textContent = 'OK';
-    renderMessageElement(messageElement, 'error');
+    state = 'error';
+    renderMessageElement(messageElement);
   };
 
   window.message = {

@@ -9,7 +9,6 @@
   var commentsLoader = bigPicture.querySelector('.comments-loader');
   var commentsCount = bigPicture.querySelector('.comments-count');
   var commentsOpen = bigPicture.querySelector('.comments-open');
-  var body = document.querySelector('body');
   var closeButton = bigPicture.querySelector('#picture-cancel');
 
 
@@ -91,7 +90,7 @@
 
   var showBigPicture = function (picture) {
     renderBigPictureElement(picture);
-    body.classList.add('modal-open');
+    document.body.classList.add('modal-open');
     bigPicture.classList.remove('hidden');
 
     document.addEventListener('keydown', onBigPictureEscPress);
@@ -99,7 +98,7 @@
   };
 
   var hideBigPicture = function () {
-    body.classList.remove('modal-open');
+    document.body.classList.remove('modal-open');
     bigPicture.classList.add('hidden');
     commentsList.querySelectorAll('li').forEach(function (element) {
       element.remove();

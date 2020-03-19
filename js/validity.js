@@ -24,7 +24,7 @@
 
   var setCustomValidation = function (hashtags, input) {
     if (hashtags.length > MAX_HASHTAGS_NUMBER) {
-      input.setCustomValidity('нельзя указать больше пяти хэш-тегов');
+      showError(input, 'нельзя указать больше пяти хэш-тегов');
       return;
     }
     var hashtagsLength = hashtags.length;
@@ -32,32 +32,29 @@
       var hashtag = hashtags[i];
 
       if (hashtag[0] !== '#') {
-        input.setCustomValidity('хэш-тег должен начинаться с символа # (решётка)');
-        setErrorBorderStyle(input);
+        showError(input, 'хэш-тег должен начинаться с символа # (решётка)');
         break;
       } else if (hashtag.length < MIN_HASHTAG_LENGTH) {
-        input.setCustomValidity('хеш-тег не может состоять только из одной решётки');
-        setErrorBorderStyle(input);
+        showError(input, 'хеш-тег не может состоять только из одной решётки');
         break;
       } else if (hashtag.length > MAX_HASHTAG_LENGTH) {
-        input.setCustomValidity('максимальная длина одного хэш-тега 20 символов, включая решётку');
-        setErrorBorderStyle(input);
+        showError(input, 'максимальная длина одного хэш-тега 20 символов, включая решётку');
         break;
       } else if (!hashtag.substring(1).match(REGEXP)) {
-        input.setCustomValidity('название хэш-тега должно состоять только из букв и цифр');
-        setErrorBorderStyle(input);
+        showError(input, 'название хэш-тега должно состоять только из букв и цифр');
         break;
       } else if (hashtags.indexOf(hashtag, i + 1) !== -1) {
-        input.setCustomValidity('один и тот же хэш-тег не может быть использован дважды');
-        setErrorBorderStyle(input);
+        showError(input, 'один и тот же хэш-тег не может быть использован дважды');
         break;
       } else {
         input.setCustomValidity('');
+        input.style.border = 'none';
       }
     }
   };
 
-  var setErrorBorderStyle = function (input) {
+  var showError = function (input, errorMessage) {
+    input.setCustomValidity(errorMessage);
     input.style.border = ERROR_BORDER_STYLE;
   };
 

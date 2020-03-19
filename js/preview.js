@@ -39,6 +39,7 @@
     body.classList.remove('modal-open');
     removeListeners();
     window.filter.clear();
+    clearForm();
   };
 
   var addListeners = function () {
@@ -111,7 +112,6 @@
         function () {
           showSuccessMessage();
           hideEditForm();
-          clearForm();
         },
         function (message) {
           showErrorMessage(message);
