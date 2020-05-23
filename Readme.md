@@ -3,6 +3,7 @@
 * Студент: [Veronika Stasyuk](https://up.htmlacademy.ru/javascript/19/user/501771).
 * Наставник: [Владимир Коршунов](https://htmlacademy.ru/profile/bekobou)
 
+
 ---
 
 _Не удаляйте и не обращайте внимание на файлы:_<br>
