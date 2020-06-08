@@ -3,8 +3,8 @@
 (function () {
   var TIMEOUT = 10000;
   var Url = {
-    GET: 'https://js.dump.academy/kekstagram/data',
-    POST: 'https://js.dump.academy/kekstagram'
+    GET: 'https://javascript.pages.academy/kekstagram/data',
+    POST: 'https://javascript.pages.academy/kekstagram'
   };
   var Code = {
     SUCCESS: 200,
